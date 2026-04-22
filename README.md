@@ -32,59 +32,75 @@
 - 📱 **Vollständig responsive** — Desktop und Mobile
 - 〰️ **Linien-Toggle** — Angriffspfeile & Radar-Ringe ein-/ausblenden
 - 🛡️ **Dynamische IP-Whitelist** — eigene IP automatisch alle 15 Min whitelisten
-- 🟢 **Whitelist-Badge** — zeigt aktuelle IP + Status live an
+- 🟢 **Whitelist-Badge** — zeigt aktuelle IP + Status live im Dashboard
 - 🌐 **Zweisprachig (DE/EN)** — alle Labels, Städte- und Ländernamen umschaltbar
 - 🏙️ **Lokalisierte Stadtnamen** — Nürnberg statt Nuremberg, München statt Munich etc.
-- 🗺️ **Lokalisierte Ländernamen** — Deutschland statt Germany, Frankreich statt France etc.
-- 📐 **Responsive Controls** — Buttons passen sich der Fenstergröße an
 - 📍 **Korrigierte GeoIP** — Vogtland/Plauen korrekt statt falscher Grenzregion
 
 ---
 
-## 🚀 Docker-Installation (empfohlen)
+## 🚀 Installation — Unraid (App Store)
 
-### 1. docker-compose.yml anlegen
+### 1. App Store öffnen
 
-```bash
-mkdir crowdsec-monitor && cd crowdsec-monitor
-curl -o docker-compose.yml \
-  https://raw.githubusercontent.com/kabelsalatundklartext/crowdsec-threat-map-docker/main/docker/docker-compose.yml
-```
+Unraid → **Apps** → Suchfeld: `crowdsec-threat-map` → Installieren
 
-### 2. Konfigurieren
+### 2. Pflichtfelder ausfüllen
 
-`docker-compose.yml` öffnen und anpassen:
+| Feld | Beispiel | Beschreibung |
+|------|---------|-------------|
+| **Server Breitengrad** | `53.5753` | ⚠️ Pflicht — euer Breitengrad |
+| **Server Längengrad** | `10.0153` | ⚠️ Pflicht — euer Längengrad |
+| **CrowdSec Datenpfad** | `/mnt/user/Docker/crowdsec/data` | ⚠️ Pflicht — Pfad zu euren CrowdSec-Daten |
+| **Postoverflows Pfad** | `/mnt/user/Docker/crowdsec/postoverflows` | Für dynamische Whitelist |
+| **Dashboard Port** | `8080` | Port für das Dashboard |
 
-```yaml
-volumes:
-  - /EUER-PFAD/data:/crowdsec/data:ro
-  - /EUER-PFAD/postoverflows:/crowdsec/postoverflows
+> **Koordinaten finden:** Rechtsklick auf [Google Maps](https://maps.google.com) → „Was ist hier?"
 
-environment:
-  - SERVER_LAT=53.5753   # ⚠️ Pflicht — euer Breitengrad
-  - SERVER_LON=10.0153   # ⚠️ Pflicht — euer Längengrad
-  - SERVER_NAME=Hamburg  # Anzeigename auf der Karte
-```
+> **CrowdSec-Pfad finden:**
+> ```bash
+> docker inspect crowdsec | grep -A5 "Mounts"
+> # → "Source": "/mnt/user/Docker/crowdsec/data"
+> ```
 
-**CrowdSec-Datenpfad herausfinden:**
-```bash
-docker inspect crowdsec | grep -A5 "Mounts"
-# → "Source": "/euer/pfad/data"
-```
+### 3. Optionale Einstellungen
 
-**Koordinaten:** Rechtsklick auf [Google Maps](https://maps.google.com) → „Was ist hier?"
+| Feld | Standard | Beschreibung |
+|------|----------|-------------|
+| **Server Name** | `MeinServer` | Anzeigename auf der Karte |
+| **CrowdSec Container** | `crowdsec` | Name des CrowdSec-Containers |
+| **Whitelist aktivieren** | `true` | Schützt vor Selbst-Ban bei IP-Wechsel |
 
-### 3. Starten
+### 4. Starten
 
-```bash
-docker compose up -d
-```
+Auf **Anwenden** klicken → Container startet automatisch.
 
-Dashboard: **http://EURE-IP:8080**
+Dashboard: **http://EURE-UNRAID-IP:8080**
 
 ---
 
-## ⚙️ Umgebungsvariablen
+## 🚀 Installation — Docker
+
+```bash
+docker run -d \
+  --name crowdsec-monitor \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  -v /pfad/zu/crowdsec/data:/crowdsec/data:ro \
+  -v /pfad/zu/crowdsec/postoverflows:/crowdsec/postoverflows \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  --group-add 999 \
+  -e SERVER_LAT=53.5753 \
+  -e SERVER_LON=10.0153 \
+  -e SERVER_NAME=Hamburg \
+  ghcr.io/kabelsalatundklartext/crowdsec-threat-map-docker:latest
+```
+
+Oder mit `docker-compose.yml` — die aktuelle Version findet ihr im Repository unter `docker/docker-compose.yml`.
+
+---
+
+## ⚙️ Alle Variablen
 
 | Variable | Standard | Beschreibung |
 |----------|----------|-------------|
@@ -92,59 +108,46 @@ Dashboard: **http://EURE-IP:8080**
 | `SERVER_LON` | `0.0` | ⚠️ Längengrad des Servers |
 | `SERVER_NAME` | `MeinServer` | Anzeigename auf der Karte |
 | `CROWDSEC_CONTAINER` | `crowdsec` | Name des CrowdSec-Docker-Containers |
+| `CROWDSEC_DB_PATH` | `/crowdsec/data/crowdsec.db` | Pfad zur CrowdSec SQLite-DB |
+| `CROWDSEC_MMDB_PATH` | `/crowdsec/data/GeoLite2-City.mmdb` | Pfad zur GeoIP-Datenbank |
 | `CACHE_TTL` | `60` | Cache-Zeit in Sekunden |
 | `DAYS_BACK` | `365` | Anzahl Tage für die Anzeige |
 | `WHITELIST_ENABLED` | `true` | Dynamische Whitelist aktivieren |
-| `WHITELIST_FILE` | *(siehe unten)* | Pfad zur Whitelist-YAML |
+| `WHITELIST_FILE` | `/crowdsec/postoverflows/`<br>`s01-whitelist/my-whitelist.yaml` | Pfad zur Whitelist-YAML |
 | `WHITELIST_INTERVAL` | `900` | Prüfintervall in Sekunden (15 min) |
 | `CROWDSEC_RESTART_WAIT` | `15` | Wartezeit nach CrowdSec-Neustart (Sek.) |
-
-Standard-Whitelist-Pfad im Container:
-`/crowdsec/postoverflows/s01-whitelist/my-whitelist.yaml`
 
 ---
 
 ## 📦 Volumes
 
-| Container-Pfad | Beschreibung | Pflicht? |
-|---------------|-------------|---------|
-| `/crowdsec/data` | CrowdSec-Datenpfad (DB + MMDB) | ✅ Ja |
-| `/crowdsec/postoverflows` | Für dynamische Whitelist | Nur wenn `WHITELIST_ENABLED=true` |
-| `/var/run/docker.sock` | Für IP-Unban via `docker exec` | Nur für Unban-Button |
+| Host-Pfad | Container-Pfad | Beschreibung | Pflicht? |
+|-----------|---------------|-------------|---------|
+| `/pfad/zu/crowdsec/data` | `/crowdsec/data:ro` | CrowdSec DB + GeoIP-MMDB | ✅ Ja |
+| `/pfad/zu/crowdsec/postoverflows` | `/crowdsec/postoverflows` | Für dynamische Whitelist | Nur wenn `WHITELIST_ENABLED=true` |
+| `/var/run/docker.sock` | `/var/run/docker.sock:ro` | Für IP-Unban + Whitelist-Neustart | Nur für Unban-Button |
 
----
-
-## 🌐 Sprache & Lokalisierung
-
-Das Dashboard unterstützt **Deutsch und Englisch** — umschaltbar per Klick auf den `DE/EN`-Button.
-
-**Was wird übersetzt:**
-
-| Bereich | Beispiel DE | Beispiel EN |
-|---------|------------|------------|
-| UI-Labels | ANGRIFFE, LÄNDER, NEUESTE | ATTACKS, COUNTRIES, NEWEST |
-| Städtenamen | Nürnberg, München, Köln | Nuremberg, Munich, Cologne |
-| Städtenamen | Wien, Zürich, Prag | Vienna, Zurich, Prague |
-| Ländernamen (Karte) | Deutschland, Frankreich | Germany, France |
-| Ländernamen (Karte) | Russland, Südkorea | Russia, South Korea |
-
-Übersetzungen gelten für: **Feed, Tooltip, Karte, Kontextmenü und Popup**.
-
----
-
-## 🗺️ GeoIP-Korrekturen
-
-MaxMind ordnet IPs manchmal falsch zu — besonders in Grenzregionen. Der Exporter enthält eine eigene Städteliste mit korrigierten Koordinaten:
-
-- **Plauen / Vogtland** — Hetzner-IPs aus dem Vogtland werden korrekt als `Plauen` angezeigt statt als `Cheb` (tschechische Grenzstadt)
-- **Cheb** — auf die korrekte tschechische Position verschoben
-- **Zwickau, Chemnitz** — als zusätzliche Vogtland-Ankerpunkte hinzugefügt
+> **Unraid-Beispielpfade:**
+> - `/mnt/user/Docker/crowdsec/data`
+> - `/mnt/user/Docker/crowdsec/postoverflows`
 
 ---
 
 ## 🛡️ Dynamische IP-Whitelist
 
-Heimanschlüsse bekommen meist täglich eine neue IP. Ohne Whitelist kann CrowdSec euch selbst bannen. Der eingebaute Hintergrund-Thread prüft alle 15 Minuten eure aktuelle IP und aktualisiert die Whitelist-YAML automatisch.
+Heimanschlüsse bekommen meist täglich eine neue IP. Ohne Whitelist kann CrowdSec euch selbst bannen. Der eingebaute Hintergrund-Thread prüft alle 15 Minuten eure aktuelle öffentliche IP und aktualisiert die Whitelist-YAML automatisch.
+
+**Voraussetzungen:**
+- `WHITELIST_ENABLED=true` (Standard)
+- Volume `/crowdsec/postoverflows` eingebunden
+- `/var/run/docker.sock` eingebunden
+- Docker-GID korrekt gesetzt (`--group-add 999` bzw. in Unraid über `group_add`)
+
+**Wie es funktioniert:**
+1. Exporter ermittelt eure aktuelle öffentliche IP
+2. Vergleich mit der aktuellen Whitelist-YAML
+3. Bei Änderung: YAML wird aktualisiert, CrowdSec wird neu gestartet
+4. Wartezeit nach Neustart konfigurierbar via `CROWDSEC_RESTART_WAIT`
 
 **Dashboard-Badge:**
 
@@ -167,38 +170,49 @@ Jeder Feed-Eintrag zeigt den Ban-Status direkt an:
 
 ---
 
+## 🗺️ GeoIP & Stadtanzeige
+
+Ohne GeoIP-Datenbank werden keine Städte angezeigt, nur Länderpunkte.
+
+**GeoLite2-City.mmdb einrichten:**
+1. Kostenlos registrieren: [MaxMind GeoLite2](https://www.maxmind.com/en/geolite2/signup)
+2. `GeoLite2-City.mmdb` herunterladen
+3. In euren CrowdSec-Datenordner legen (gleicher Ordner wie `crowdsec.db`)
+4. Container neu starten
+
+---
+
 ## 🛠️ Fehlerbehebung
 
 **Dashboard leer / keine Daten:**
 ```bash
 docker logs crowdsec-monitor
-curl http://EURE-IP:8080/metrics | head -5
+curl http://EURE-IP:8080/metrics | head -10
+```
+
+**Falscher CrowdSec-Pfad:**
+```bash
+docker inspect crowdsec | grep -A5 "Mounts"
 ```
 
 **Unban funktioniert nicht:**
 ```bash
-# Container-Namen prüfen
-docker ps | grep crowdsec
-# → In CROWDSEC_CONTAINER eintragen
-
-# Docker-Socket prüfen
-ls -la /var/run/docker.sock
+# Docker-GID prüfen
+getent group docker | cut -d: -f3
+# → In Unraid unter "Extra Parameters" als --group-add eintragen
 ```
 
 **Whitelist-Fehler:**
 ```bash
 curl http://EURE-IP:8080/whitelist-status
-# Häufige Ursache: postoverflows-Volume nicht eingebunden
 ```
 
-**Keine Stadtanzeige:**
-→ `GeoLite2-City.mmdb` ins CrowdSec-Datenverzeichnis legen
-→ [MaxMind kostenlos herunterladen](https://www.maxmind.com/en/geolite2/signup)
-
-**Falsche Stadtanzeige bei Grenz-IPs:**
-→ Bekanntes MaxMind-Problem bei Grenzregionen
-→ Fehler melden: [MaxMind Correction Form](https://www.maxmind.com/en/geoip-location-correction)
-→ Häufige Grenzfälle sind im Exporter bereits korrigiert (Vogtland/Plauen)
+**Dashboard zeigt Verbindungsfehler:**
+```bash
+# Prüfen ob entrypoint.sh die URL korrekt gesetzt hat
+docker exec crowdsec-monitor grep "EXPORTER_URL" /var/www/html/index.html
+# → Sollte '/metrics' zeigen
+```
 
 ---
 
