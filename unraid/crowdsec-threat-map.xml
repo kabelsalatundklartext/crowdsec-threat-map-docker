@@ -35,7 +35,7 @@
   <Category>Tools: Network:Other</Category>
   <WebUI>http://[IP]:[PORT:8080]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/kabelsalatundklartext/crowdsec-threat-map/main/unraid/crowdsec-threat-map.xml</TemplateURL>
-  <Icon>https://raw.githubusercontent.com/kabelsalatundklartext/crowdsec-threat-map/main/unraid/icon.png</Icon>
+  <Icon>https://raw.githubusercontent.com/kabelsalatundklartext/crowdsec-threat-map-docker/main/unraid/icon.png</Icon>
   <ExtraParams>--group-add 999</ExtraParams>
   <PostArgs/>
   <CPUset/>
