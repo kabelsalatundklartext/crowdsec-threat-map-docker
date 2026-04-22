@@ -541,8 +541,8 @@
 // 1. ⚠️ PFLICHT: IP-Adresse eures Unraid-Servers eintragen
 //    Wie findet ihr die IP? Unraid → Tools → System Information
 //    Oder im Terminal: ip addr | grep inet
-const EXPORTER_URL = 'http://192.168.1.10:9456/metrics';
-//  Beispiel:          'http://192.168.1.10:9456/metrics'
+const EXPORTER_URL = '/metrics';
+//  Docker: '/metrics' (nginx proxy) | Direkt: 'http://IP:9456/metrics'
 
 // 2. ⚠️ PFLICHT: Koordinaten eures Servers
 //    → Rechtsklick auf Google Maps → "Was ist hier?" → Zahlen kopieren
