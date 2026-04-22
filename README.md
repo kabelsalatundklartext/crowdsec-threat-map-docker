@@ -47,13 +47,13 @@ Unraid → **Apps** → Suchfeld: `crowdsec-threat-map` → Installieren
 
 ### 2. Pflichtfelder ausfüllen
 
-| Feld | Beispiel | Beschreibung |
+| Unraid | Beispiel | Beschreibung |
 |------|---------|-------------|
-| **Server Breitengrad** | `53.5753` | ⚠️ Pflicht — euer Breitengrad |
-| **Server Längengrad** | `10.0153` | ⚠️ Pflicht — euer Längengrad |
-| **CrowdSec Datenpfad** | `/mnt/user/Docker/crowdsec/data` | ⚠️ Pflicht — Pfad zu euren CrowdSec-Daten |
-| **Postoverflows Pfad** | `/mnt/user/Docker/crowdsec/postoverflows` | Für dynamische Whitelist |
-| **Dashboard Port** | `8080` | Port für das Dashboard |
+| **Server Breitengrad** | `52.5200` | ⚠️ Pflicht — euer Breitengrad |
+| **Server Längengrad** | `13.4050` | ⚠️ Pflicht — euer Längengrad |
+| Pfad `/crowdsec/data` | `/mnt/user/Docker/crowdsec/data` | ⚠️ Pflicht — Pfad zu euren CrowdSec-Daten |
+| Pfad `/crowdsec/postoverflows` | `/mnt/user/Docker/crowdsec/postoverflows` | Für dynamische Whitelist |
+| Port `8080` | `8080` | Port für das Dashboard (frei wählbar) |
 
 > **Koordinaten finden:** Rechtsklick auf [Google Maps](https://maps.google.com) → „Was ist hier?"
 
@@ -67,9 +67,9 @@ Unraid → **Apps** → Suchfeld: `crowdsec-threat-map` → Installieren
 
 | Feld | Standard | Beschreibung |
 |------|----------|-------------|
-| **Server Name** | `MeinServer` | Anzeigename auf der Karte |
-| **CrowdSec Container** | `crowdsec` | Name des CrowdSec-Containers |
-| **Whitelist aktivieren** | `true` | Schützt vor Selbst-Ban bei IP-Wechsel |
+| Variable `SERVER_NAME` | `MeinServer` | Anzeigename auf der Karte |
+| Variable `CROWDSEC_CONTAINER` | `crowdsec` | Name des CrowdSec-Containers |
+| Variable `WHITELIST_ENABLED` | `true` | Schützt vor Selbst-Ban bei IP-Wechsel |
 
 ### 4. Starten
 
@@ -90,9 +90,9 @@ docker run -d \
   -v /pfad/zu/crowdsec/postoverflows:/crowdsec/postoverflows \
   -v /var/run/docker.sock:/var/run/docker.sock:ro \
   --group-add 999 \
-  -e SERVER_LAT=53.5753 \
-  -e SERVER_LON=10.0153 \
-  -e SERVER_NAME=Hamburg \
+  -e SERVER_LAT=52.5200 \
+  -e SERVER_LON=13.4050 \
+  -e SERVER_NAME=Berlin \
   ghcr.io/kabelsalatundklartext/crowdsec-threat-map-docker:latest
 ```
 
