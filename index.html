@@ -1069,7 +1069,7 @@ function drawServerDots(){
     .attr('r',7).attr('fill','#00aaff').attr('stroke','#fff').attr('stroke-width',1.5);
   dotG.append('text').attr('class','srv-label').attr('x',sx+11).attr('y',sy+4)
     .attr('data-sx',sx).attr('fill','#00aaff').attr('font-size','9px')
-    .attr('font-family','Share Tech Mono,monospace').attr('letter-spacing','1px').text(SERVER_NAME_MAP||'SERVER') //  ← Server-Name auf der Karte;
+    .attr('font-family','Share Tech Mono,monospace').attr('letter-spacing','0.5px').attr('font-size','9px').text(SERVER_NAME_MAP||'SERVER') //  ← Server-Name auf der Karte;
   // Apply current scale immediately after drawing
   updateServerScale();
 }
