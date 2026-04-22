@@ -4,18 +4,18 @@
   <!-- ═══════════════════════════════════════════════════
        CrowdSec Threat Map — Unraid CA Template
        Autor: kabelsalatundklartext
-       https://github.com/kabelsalatundklartext/crowdsec-threat-map
+       https://github.com/kabelsalatundklartext/crowdsec-threat-map-docker
        ═══════════════════════════════════════════════════ -->
 
   <Name>CrowdSec-Threat-Map</Name>
   <Repository>ghcr.io/kabelsalatundklartext/crowdsec-threat-map-docker:latest</Repository>
-  <Registry>https://github.com/kabelsalatundklartext/crowdsec-threat-map/pkgs/container/crowdsec-threat-map</Registry>
+  <Registry>https://github.com/kabelsalatundklartext/crowdsec-threat-map-docker/pkgs/container/crowdsec-threat-map</Registry>
   <Network>bridge</Network>
   <MyIP/>
   <Shell>sh</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/kabelsalatundklartext/crowdsec-threat-map/issues</Support>
-  <Project>https://github.com/kabelsalatundklartext/crowdsec-threat-map</Project>
+  <Support>https://github.com/kabelsalatundklartext/crowdsec-threat-map-docker/issues</Support>
+  <Project>https://github.com/kabelsalatundklartext/crowdsec-threat-map-docker</Project>
   <Overview>
     Echtzeit-Angriffskarte direkt aus eurer lokalen CrowdSec-Datenbank.&#xD;&#xA;
     &#xD;&#xA;
@@ -34,14 +34,14 @@
   </Overview>
   <Category>Tools: Network:Other</Category>
   <WebUI>http://[IP]:[PORT:8080]/</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/kabelsalatundklartext/crowdsec-threat-map/main/unraid/crowdsec-threat-map.xml</TemplateURL>
+  <TemplateURL>https://raw.githubusercontent.com/kabelsalatundklartext/crowdsec-threat-map-docker/main/unraid/crowdsec-threat-map.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/kabelsalatundklartext/crowdsec-threat-map-docker/main/unraid/icon.png</Icon>
   <ExtraParams>--group-add 999</ExtraParams>
   <PostArgs/>
   <CPUset/>
   <DateInstalled/>
   <DonateText>Gefällt dir das Projekt? Gib einen Stern auf GitHub!</DonateText>
-  <DonateLink>https://github.com/kabelsalatundklartext/crowdsec-threat-map</DonateLink>
+  <DonateLink>https://github.com/kabelsalatundklartext/crowdsec-threat-map-docker</DonateLink>
   <Requires>CrowdSec Docker Container</Requires>
 
   <!-- ═══════ PORT ═══════ -->
@@ -60,24 +60,24 @@
   <Config
     Name="CrowdSec Datenpfad"
     Target="/crowdsec/data"
-    Default="/mnt/user/appdata/crowdsec/data"
+    Default=""
     Mode="ro"
     Description="Pfad zum CrowdSec data-Verzeichnis (enthält crowdsec.db und optional GeoLite2-City.mmdb). Tipp: docker inspect crowdsec | grep -A5 Mounts"
     Type="Path"
     Display="always"
     Required="true"
-    Mask="false">/mnt/user/appdata/crowdsec/data</Config>
+    Mask="false"></Config>
 
   <Config
     Name="CrowdSec Postoverflows-Pfad"
     Target="/crowdsec/postoverflows"
-    Default="/mnt/user/appdata/crowdsec/postoverflows"
+    Default=""
     Mode="rw"
     Description="Pfad zum postoverflows-Verzeichnis. Wird für die dynamische IP-Whitelist benötigt (WHITELIST_ENABLED=true). Kann leer gelassen werden wenn Whitelist deaktiviert."
     Type="Path"
     Display="always"
     Required="false"
-    Mask="false">/mnt/user/appdata/crowdsec/postoverflows</Config>
+    Mask="false"></Config>
 
   <Config
     Name="Docker Socket"
