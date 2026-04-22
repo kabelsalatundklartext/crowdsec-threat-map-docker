@@ -48,13 +48,13 @@
   <Config
     Name="Dashboard Port"
     Target="8080"
-    Default="8080"
+    Default=""
     Mode="tcp"
-    Description="Port für das Web-Dashboard. Im Browser aufrufen: http://EURE-UNRAID-IP:8080"
+    Description="Port für das Web-Dashboard — frei wählbar, z.B. 8080, 5757, etc."
     Type="Port"
     Display="always"
     Required="true"
-    Mask="false">8080</Config>
+    Mask="false"></Config>
 
   <!-- ═══════ VOLUMES ═══════ -->
   <Config
