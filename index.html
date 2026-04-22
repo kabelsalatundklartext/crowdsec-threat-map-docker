@@ -664,6 +664,60 @@ const LANG = {
   }
 };
 let currentLang = 'de';
+
+const CITY_NAMES_DE = {
+  "Antwerp": "Antwerpen",
+  "Athens": "Athen",
+  "Beijing": "Peking",
+  "Belgrade": "Belgrad",
+  "Brasov": "Kronstadt",
+  "Brno": "Brünn",
+  "Brussels": "Brüssel",
+  "Bucharest": "Bukarest",
+  "Cheb": "Eger",
+  "Cologne": "Köln",
+  "Copenhagen": "Kopenhagen",
+  "Dusseldorf": "Düsseldorf",
+  "Florence": "Florenz",
+  "Gdansk": "Danzig",
+  "Geneva": "Genf",
+  "Genoa": "Genua",
+  "Ghent": "Gent",
+  "Gothenburg": "Göteborg",
+  "Katowice": "Kattowitz",
+  "Krakow": "Krakau",
+  "Kyiv": "Kiew",
+  "Liege": "Lüttich",
+  "Lisbon": "Lissabon",
+  "Lubeck": "Lübeck",
+  "Malmo": "Malmö",
+  "Milan": "Mailand",
+  "Moscow": "Moskau",
+  "Munich": "München",
+  "Naples": "Neapel",
+  "Nuremberg": "Nürnberg",
+  "Plzen": "Pilsen",
+  "Prague": "Prag",
+  "Rome": "Rom",
+  "Saint Petersburg": "Sankt Petersburg",
+  "Seville": "Sevilla",
+  "Strasbourg": "Straßburg",
+  "Szczecin": "Stettin",
+  "Tokyo": "Tokio",
+  "Venice": "Venedig",
+  "Vienna": "Wien",
+  "Warsaw": "Warschau",
+  "Wroclaw": "Breslau",
+  "Zurich": "Zürich",
+};
+
+// Stadtname übersetzen je nach aktueller Sprache
+function translateCity(city) {
+  if (!city) return city;
+  if (currentLang === 'de' && CITY_NAMES_DE[city]) return CITY_NAMES_DE[city];
+  return city;
+}
+
 function t(key, ...args){ const tr=LANG[currentLang]; if(typeof tr[key]==='function') return tr[key](...args); return tr[key]||key; }
 
 function applyLang(){
@@ -1202,7 +1256,7 @@ function renderDots(){
           .attr('font-size', `${6*ik}px`)
           .attr('font-family','Orbitron,monospace')
           .attr('pointer-events','none')
-          .text(d.city);
+          .text(translateCity(d.city));
       }
     }
   });
@@ -1371,7 +1425,7 @@ let ctxCurrentIP='';
 function showCtx(ev,d){
   const m=document.getElementById('ctx-menu');
   ctxCurrentIP=d.ip||'';
-  const cityStr=d.city&&d.city!=='-'?` · 📍${d.city}`:'';
+  const cityStr=d.city&&d.city!=='-'?` · 📍${translateCity(d.city)}`:'';
   document.getElementById('ctx-title').textContent=`${FLAG[d.country]||'🌐'} ${d.ip}${cityStr}`;
   document.getElementById('c-cti').href=`https://app.crowdsec.net/cti/${d.ip}`;
   document.getElementById('c-shodan').href=`https://www.shodan.io/host/${d.ip}`;
@@ -1467,7 +1521,7 @@ function showTip(ev,d){
   const asnStr  = d.asnumber ? `AS${d.asnumber}` : '';
   const subnetStr= d.iprange && d.iprange!=='-' ? d.iprange : '';
   const timeStr = d.time_de || d.time_iso || '';
-  const cityStr = d.city && d.city!=='-' ? d.city : '';
+  const cityStr = d.city && d.city!=='-' ? translateCity(d.city) : '';
   tipEl.innerHTML=`
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px;">
       <span style="color:#ff2244;font-size:12px;">${d.ip}</span>
@@ -1503,7 +1557,7 @@ function feedItemHTML(d){
   const timeStr=d.time_de||d.time_iso||'—';
   const asnStr=d.asnumber?`AS${d.asnumber}`:'';
   const subnetStr=d.iprange&&d.iprange!=='-'?d.iprange:'';
-  const cityStr=d.city&&d.city!=='-'?d.city:'';
+  const cityStr=d.city&&d.city!=='-'?translateCity(d.city):'';
   return `<div class="feed-item" style="cursor:default;">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
       <div class="feed-ip" style="flex:1;">${d.ip}</div>
@@ -1670,7 +1724,7 @@ function flashPoint(px,py,ip,country,scenario,iprange,city){
     .attr('fill','#00ffe0')
     .attr('font-size',`${8*ik2}px`)
     .attr('font-family','Share Tech Mono,monospace')
-    .text(city&&city!=='-'?`${ip} · ${city}`:ip);
+    .text(city&&city!=='-'?`${ip} · ${translateCity(city)}`:ip);
 
   // Fade popup out after 2.5s
   setTimeout(()=>{
