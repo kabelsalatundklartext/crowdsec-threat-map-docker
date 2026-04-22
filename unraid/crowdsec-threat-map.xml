@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<Container version="2">
+
+  <!-- ═══════════════════════════════════════════════════
+       CrowdSec Threat Map — Unraid CA Template
+       Autor: kabelsalatundklartext
+       https://github.com/kabelsalatundklartext/crowdsec-threat-map
+       ═══════════════════════════════════════════════════ -->
+
+  <Name>CrowdSec-Threat-Map</Name>
+  <Repository>ghcr.io/kabelsalatundklartext/crowdsec-threat-map-docker:latest</Repository>
+  <Registry>https://github.com/kabelsalatundklartext/crowdsec-threat-map/pkgs/container/crowdsec-threat-map</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/kabelsalatundklartext/crowdsec-threat-map/issues</Support>
+  <Project>https://github.com/kabelsalatundklartext/crowdsec-threat-map</Project>
+  <Overview>
+    Echtzeit-Angriffskarte direkt aus eurer lokalen CrowdSec-Datenbank.&#xD;&#xA;
+    &#xD;&#xA;
+    Features:&#xD;&#xA;
+    - Interaktive Weltkarte mit animierten Angriffspfeilen (D3.js)&#xD;&#xA;
+    - Live-Feed mit Suche, Filter und Pagination&#xD;&#xA;
+    - Ban-Status-Anzeige und IP-Unban direkt aus dem Dashboard&#xD;&#xA;
+    - Dynamische IP-Whitelist (verhindert Selbst-Ban bei IP-Wechsel)&#xD;&#xA;
+    - 4 Farbthemen, Sound-Alarm, CSV-Export&#xD;&#xA;
+    - Vollständig responsive — Desktop und Mobile&#xD;&#xA;
+    &#xD;&#xA;
+    Voraussetzung: CrowdSec muss als Docker-Container auf Unraid laufen.&#xD;&#xA;
+    &#xD;&#xA;
+    Tipp — CrowdSec Datenpfad herausfinden:&#xD;&#xA;
+    docker inspect crowdsec | grep -A5 "Mounts"
+  </Overview>
+  <Category>Tools: Network:Other</Category>
+  <WebUI>http://[IP]:[PORT:8080]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/kabelsalatundklartext/crowdsec-threat-map/main/unraid/crowdsec-threat-map.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/kabelsalatundklartext/crowdsec-threat-map/main/unraid/icon.png</Icon>
+  <ExtraParams>--group-add 999</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled/>
+  <DonateText>Gefällt dir das Projekt? Gib einen Stern auf GitHub!</DonateText>
+  <DonateLink>https://github.com/kabelsalatundklartext/crowdsec-threat-map</DonateLink>
+  <Requires>CrowdSec Docker Container</Requires>
+
+  <!-- ═══════ PORT ═══════ -->
+  <Config
+    Name="Dashboard Port"
+    Target="8080"
+    Default="8080"
+    Mode="tcp"
+    Description="Port für das Web-Dashboard. Im Browser aufrufen: http://EURE-UNRAID-IP:8080"
+    Type="Port"
+    Display="always"
+    Required="true"
+    Mask="false">8080</Config>
+
+  <!-- ═══════ VOLUMES ═══════ -->
+  <Config
+    Name="CrowdSec Datenpfad"
+    Target="/crowdsec/data"
+    Default="/mnt/user/appdata/crowdsec/data"
+    Mode="ro"
+    Description="Pfad zum CrowdSec data-Verzeichnis (enthält crowdsec.db und optional GeoLite2-City.mmdb). Tipp: docker inspect crowdsec | grep -A5 Mounts"
+    Type="Path"
+    Display="always"
+    Required="true"
+    Mask="false">/mnt/user/appdata/crowdsec/data</Config>
+
+  <Config
+    Name="CrowdSec Postoverflows-Pfad"
+    Target="/crowdsec/postoverflows"
+    Default="/mnt/user/appdata/crowdsec/postoverflows"
+    Mode="rw"
+    Description="Pfad zum postoverflows-Verzeichnis. Wird für die dynamische IP-Whitelist benötigt (WHITELIST_ENABLED=true). Kann leer gelassen werden wenn Whitelist deaktiviert."
+    Type="Path"
+    Display="always"
+    Required="false"
+    Mask="false">/mnt/user/appdata/crowdsec/postoverflows</Config>
+
+  <Config
+    Name="Docker Socket"
+    Target="/var/run/docker.sock"
+    Default="/var/run/docker.sock"
+    Mode="ro"
+    Description="Docker Socket — wird für IP-Unban und dynamische Whitelist (CrowdSec-Neustart) benötigt."
+    Type="Path"
+    Display="always"
+    Required="false"
+    Mask="false">/var/run/docker.sock</Config>
+
+  <!-- ═══════ PFLICHT-VARIABLEN ═══════ -->
+  <Config
+    Name="Server Breitengrad (LAT)"
+    Target="SERVER_LAT"
+    Default="0.0"
+    Mode=""
+    Description="Breitengrad eures Servers — erscheint als Zielpunkt auf der Karte. Tipp: Rechtsklick auf Google Maps → Was ist hier?"
+    Type="Variable"
+    Display="always"
+    Required="true"
+    Mask="false">0.0</Config>
+
+  <Config
+    Name="Server Längengrad (LON)"
+    Target="SERVER_LON"
+    Default="0.0"
+    Mode=""
+    Description="Längengrad eures Servers — erscheint als Zielpunkt auf der Karte. Tipp: Rechtsklick auf Google Maps → Was ist hier?"
+    Type="Variable"
+    Display="always"
+    Required="true"
+    Mask="false">0.0</Config>
+
+  <Config
+    Name="Server Name"
+    Target="SERVER_NAME"
+    Default="MeinServer"
+    Mode=""
+    Description="Anzeigename eures Servers im Dashboard (z.B. Hamburg, Berlin, Homelab)."
+    Type="Variable"
+    Display="always"
+    Required="true"
+    Mask="false">MeinServer</Config>
+
+  <!-- ═══════ CROWDSEC-CONTAINER ═══════ -->
+  <Config
+    Name="CrowdSec Container-Name"
+    Target="CROWDSEC_CONTAINER"
+    Default="crowdsec"
+    Mode=""
+    Description="Name des CrowdSec Docker-Containers. Prüfen mit: docker ps | grep crowdsec"
+    Type="Variable"
+    Display="always"
+    Required="true"
+    Mask="false">crowdsec</Config>
+
+  <!-- ═══════ WHITELIST ═══════ -->
+  <Config
+    Name="Dynamische Whitelist aktivieren"
+    Target="WHITELIST_ENABLED"
+    Default="true"
+    Mode=""
+    Description="Verhindert Selbst-Ban bei wechselnder IP (typisch bei deutschen Heimanschlüssen). Eigene IP wird automatisch alle 15 Minuten in CrowdSec gewhitelistet."
+    Type="Variable"
+    Display="always"
+    Required="false"
+    Mask="false">true</Config>
+
+  <Config
+    Name="Whitelist Datei-Pfad"
+    Target="WHITELIST_FILE"
+    Default="/crowdsec/postoverflows/s01-whitelist/my-whitelist.yaml"
+    Mode=""
+    Description="Pfad zur Whitelist-YAML innerhalb des Containers. Nur ändern wenn ihr einen anderen Postoverflows-Pfad nutzt."
+    Type="Variable"
+    Display="advanced"
+    Required="false"
+    Mask="false">/crowdsec/postoverflows/s01-whitelist/my-whitelist.yaml</Config>
+
+  <Config
+    Name="Whitelist Prüfintervall (Sekunden)"
+    Target="WHITELIST_INTERVAL"
+    Default="900"
+    Mode=""
+    Description="Wie oft die eigene IP geprüft und ggf. gewhitelistet wird. Standard: 900 Sekunden (15 Minuten)."
+    Type="Variable"
+    Display="advanced"
+    Required="false"
+    Mask="false">900</Config>
+
+  <!-- ═══════ ERWEITERTE EINSTELLUNGEN ═══════ -->
+  <Config
+    Name="Cache TTL (Sekunden)"
+    Target="CACHE_TTL"
+    Default="60"
+    Mode=""
+    Description="Wie lange die Metrik-Daten gecacht werden bevor sie neu aus der DB geladen werden. Standard: 60 Sekunden."
+    Type="Variable"
+    Display="advanced"
+    Required="false"
+    Mask="false">60</Config>
+
+  <Config
+    Name="Tage zurück (DAYS_BACK)"
+    Target="DAYS_BACK"
+    Default="365"
+    Mode=""
+    Description="Wie viele Tage Angriffs-Historie angezeigt wird. Standard: 365 Tage."
+    Type="Variable"
+    Display="advanced"
+    Required="false"
+    Mask="false">365</Config>
+
+  <Config
+    Name="CrowdSec Restart Wartezeit (Sekunden)"
+    Target="CROWDSEC_RESTART_WAIT"
+    Default="15"
+    Mode=""
+    Description="Wartezeit nach CrowdSec-Neustart (bei Whitelist-Update). Erhöhen wenn Timeout-Fehler im Log erscheinen. Standard: 15 Sekunden."
+    Type="Variable"
+    Display="advanced"
+    Required="false"
+    Mask="false">15</Config>
+
+</Container>
