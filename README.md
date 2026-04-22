@@ -27,13 +27,17 @@
 - 🔓 **IP-Unban** direkt aus dem Dashboard — löscht Decision UND Alert
 - 📊 **Sparkline** — Angriffe/Stunde auf einen Blick
 - 🎨 **4 Farbthemen** — Cyan, Alarm-Rot, Matrix-Grün, Amber
-- 🔊 **Sound-Alarm** bei neuen Hochrisiko-Angriffen
+- 🔊 **Sound-Alarm** bei neuen Hochrisiko-Angriffen (20+ Angriffe)
 - 📥 **CSV-Export** des kompletten Feeds
 - 📱 **Vollständig responsive** — Desktop und Mobile
 - 〰️ **Linien-Toggle** — Angriffspfeile & Radar-Ringe ein-/ausblenden
 - 🛡️ **Dynamische IP-Whitelist** — eigene IP automatisch alle 15 Min whitelisten
 - 🟢 **Whitelist-Badge** — zeigt aktuelle IP + Status live an
+- 🌐 **Zweisprachig (DE/EN)** — alle Labels, Städte- und Ländernamen umschaltbar
+- 🏙️ **Lokalisierte Stadtnamen** — Nürnberg statt Nuremberg, München statt Munich etc.
+- 🗺️ **Lokalisierte Ländernamen** — Deutschland statt Germany, Frankreich statt France etc.
 - 📐 **Responsive Controls** — Buttons passen sich der Fenstergröße an
+- 📍 **Korrigierte GeoIP** — Vogtland/Plauen korrekt statt falscher Grenzregion
 
 ---
 
@@ -53,13 +57,13 @@ curl -o docker-compose.yml \
 
 ```yaml
 volumes:
-  - /EUER-PFAD/data:/crowdsec/data:ro          # ⚠️ Pflicht
-  - /EUER-PFAD/postoverflows:/crowdsec/postoverflows  # für Whitelist
+  - /EUER-PFAD/data:/crowdsec/data:ro
+  - /EUER-PFAD/postoverflows:/crowdsec/postoverflows
 
 environment:
   - SERVER_LAT=53.5753   # ⚠️ Pflicht — euer Breitengrad
   - SERVER_LON=10.0153   # ⚠️ Pflicht — euer Längengrad
-  - SERVER_NAME=Hamburg  # euer Servername
+  - SERVER_NAME=Hamburg  # Anzeigename auf der Karte
 ```
 
 **CrowdSec-Datenpfad herausfinden:**
@@ -86,13 +90,14 @@ Dashboard: **http://EURE-IP:8080**
 |----------|----------|-------------|
 | `SERVER_LAT` | `0.0` | ⚠️ Breitengrad des Servers |
 | `SERVER_LON` | `0.0` | ⚠️ Längengrad des Servers |
-| `SERVER_NAME` | `MeinServer` | Anzeigename im Dashboard |
+| `SERVER_NAME` | `MeinServer` | Anzeigename auf der Karte |
 | `CROWDSEC_CONTAINER` | `crowdsec` | Name des CrowdSec-Docker-Containers |
 | `CACHE_TTL` | `60` | Cache-Zeit in Sekunden |
 | `DAYS_BACK` | `365` | Anzahl Tage für die Anzeige |
 | `WHITELIST_ENABLED` | `true` | Dynamische Whitelist aktivieren |
 | `WHITELIST_FILE` | *(siehe unten)* | Pfad zur Whitelist-YAML |
 | `WHITELIST_INTERVAL` | `900` | Prüfintervall in Sekunden (15 min) |
+| `CROWDSEC_RESTART_WAIT` | `15` | Wartezeit nach CrowdSec-Neustart (Sek.) |
 
 Standard-Whitelist-Pfad im Container:
 `/crowdsec/postoverflows/s01-whitelist/my-whitelist.yaml`
@@ -103,15 +108,43 @@ Standard-Whitelist-Pfad im Container:
 
 | Container-Pfad | Beschreibung | Pflicht? |
 |---------------|-------------|---------|
-| `/crowdsec/data` | CrowdSec-Datenpfad (DB + optional MMDB) | ✅ Ja |
+| `/crowdsec/data` | CrowdSec-Datenpfad (DB + MMDB) | ✅ Ja |
 | `/crowdsec/postoverflows` | Für dynamische Whitelist | Nur wenn `WHITELIST_ENABLED=true` |
 | `/var/run/docker.sock` | Für IP-Unban via `docker exec` | Nur für Unban-Button |
 
 ---
 
+## 🌐 Sprache & Lokalisierung
+
+Das Dashboard unterstützt **Deutsch und Englisch** — umschaltbar per Klick auf den `DE/EN`-Button.
+
+**Was wird übersetzt:**
+
+| Bereich | Beispiel DE | Beispiel EN |
+|---------|------------|------------|
+| UI-Labels | ANGRIFFE, LÄNDER, NEUESTE | ATTACKS, COUNTRIES, NEWEST |
+| Städtenamen | Nürnberg, München, Köln | Nuremberg, Munich, Cologne |
+| Städtenamen | Wien, Zürich, Prag | Vienna, Zurich, Prague |
+| Ländernamen (Karte) | Deutschland, Frankreich | Germany, France |
+| Ländernamen (Karte) | Russland, Südkorea | Russia, South Korea |
+
+Übersetzungen gelten für: **Feed, Tooltip, Karte, Kontextmenü und Popup**.
+
+---
+
+## 🗺️ GeoIP-Korrekturen
+
+MaxMind ordnet IPs manchmal falsch zu — besonders in Grenzregionen. Der Exporter enthält eine eigene Städteliste mit korrigierten Koordinaten:
+
+- **Plauen / Vogtland** — Hetzner-IPs aus dem Vogtland werden korrekt als `Plauen` angezeigt statt als `Cheb` (tschechische Grenzstadt)
+- **Cheb** — auf die korrekte tschechische Position verschoben
+- **Zwickau, Chemnitz** — als zusätzliche Vogtland-Ankerpunkte hinzugefügt
+
+---
+
 ## 🛡️ Dynamische IP-Whitelist
 
-Heimanschlüsse in Deutschland bekommen meist täglich eine neue IP. Ohne Whitelist kann CrowdSec euch selbst bannen. Der eingebaute Hintergrund-Thread prüft alle 15 Minuten eure aktuelle IP und aktualisiert die Whitelist-YAML automatisch.
+Heimanschlüsse bekommen meist täglich eine neue IP. Ohne Whitelist kann CrowdSec euch selbst bannen. Der eingebaute Hintergrund-Thread prüft alle 15 Minuten eure aktuelle IP und aktualisiert die Whitelist-YAML automatisch.
 
 **Dashboard-Badge:**
 
@@ -125,22 +158,12 @@ Heimanschlüsse in Deutschland bekommen meist täglich eine neue IP. Ohne Whitel
 
 ## 🔓 IP-Unban
 
-Jeder Feed-Eintrag zeigt:
+Jeder Feed-Eintrag zeigt den Ban-Status direkt an:
 
 | Icon | Bedeutung | Klick |
 |------|-----------|-------|
-| 🚫 (leuchtend) | Aktiver Ban | Decision + Alert löschen |
+| 🚫 (leuchtend) | Aktiver Ban vorhanden | Decision + Alert löschen |
 | 📋 (leuchtend) | Nur Alert/Historie | Nur Alert löschen |
-
----
-
-
-Für direkte Installation ohne Docker-Image:
-
-1. `crowdsec_exporter.py` herunterladen
-2. Pfade oben in der Datei anpassen (`DB_PATH`, `MMDB_PATH`, etc.)
-3. Unraid → **Settings → User Scripts** → neues Script
-5. `EXPORTER_PATH` anpassen → **At Startup of Array**
 
 ---
 
@@ -148,10 +171,7 @@ Für direkte Installation ohne Docker-Image:
 
 **Dashboard leer / keine Daten:**
 ```bash
-# Exporter-Logs prüfen
 docker logs crowdsec-monitor
-
-# API direkt testen
 curl http://EURE-IP:8080/metrics | head -5
 ```
 
@@ -167,16 +187,18 @@ ls -la /var/run/docker.sock
 
 **Whitelist-Fehler:**
 ```bash
-# Status abrufen
 curl http://EURE-IP:8080/whitelist-status
-
 # Häufige Ursache: postoverflows-Volume nicht eingebunden
-# → docker-compose.yml prüfen
 ```
 
 **Keine Stadtanzeige:**
 → `GeoLite2-City.mmdb` ins CrowdSec-Datenverzeichnis legen
 → [MaxMind kostenlos herunterladen](https://www.maxmind.com/en/geolite2/signup)
+
+**Falsche Stadtanzeige bei Grenz-IPs:**
+→ Bekanntes MaxMind-Problem bei Grenzregionen
+→ Fehler melden: [MaxMind Correction Form](https://www.maxmind.com/en/geoip-location-correction)
+→ Häufige Grenzfälle sind im Exporter bereits korrigiert (Vogtland/Plauen)
 
 ---
 
