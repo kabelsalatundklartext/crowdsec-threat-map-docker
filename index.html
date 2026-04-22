@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!-- 
   CrowdSec Threat Map
-  © kabelsalatundklartext | https://github.com/kabelsalatundklartext/crowdsec-threat-map-docker
+  © kabelsalatundklartext | https://github.com/kabelsalatundklartext/crowdsec-threat-map
   Lizenz: CC BY-NC 4.0 — Nutzung & Änderung erlaubt, kein kommerzieller Einsatz
   https://creativecommons.org/licenses/by-nc/4.0/
 -->
@@ -9,9 +9,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CrowdSec Threat Map</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23020810'/%3E%3Cpath d='M16 3 L28 8 L28 18 C28 24 22 29 16 31 C10 29 4 24 4 18 L4 8 Z' fill='none' stroke='%2300ffe0' stroke-width='2'/%3E%3Cpath d='M16 3 L28 8 L28 18 C28 24 22 29 16 31 C10 29 4 24 4 18 L4 8 Z' fill='%2300ffe020'/%3E%3Ccircle cx='16' cy='17' r='4' fill='%2300ffe0'/%3E%3Cline x1='16' y1='10' x2='16' y2='13' stroke='%2300ffe0' stroke-width='2'/%3E%3C/svg%3E">
+<title>🛡️ CrowdSec Threat Map</title>
 <!-- Fix 5: SVG Favicon — shield icon in accent color -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23020810'/%3E%3Cpath d='M16 3 L28 8 L28 18 C28 24 22 29 16 31 C10 29 4 24 4 18 L4 8 Z' fill='none' stroke='%2300ffe0' stroke-width='2'/%3E%3Cpath d='M16 3 L28 8 L28 18 C28 24 22 29 16 31 C10 29 4 24 4 18 L4 8 Z' fill='%2300ffe020'/%3E%3Ccircle cx='16' cy='17' r='4' fill='%2300ffe0'/%3E%3Cline x1='16' y1='10' x2='16' y2='13' stroke='%2300ffe0' stroke-width='2'/%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
@@ -450,7 +450,7 @@
         <span id="wl-dot" style="width:6px;height:6px;border-radius:50%;background:rgba(160,255,216,0.2);flex-shrink:0;display:inline-block;"></span>
         <span id="wl-text" style="color:rgba(160,255,216,0.3);">Whitelist: —</span>
       </div>
-      <a href="https://github.com/kabelsalatundklartext/crowdsec-threat-map-docker" target="_blank" style="color:rgba(0,255,200,0.35);font-size:8px;text-decoration:none;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:100%;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='rgba(0,255,200,0.35)'">⭐ GitHub: crowdsec-threat-map-docker</a></div>
+      <a href="https://github.com/kabelsalatundklartext/crowdsec-threat-map" target="_blank" style="color:rgba(0,255,200,0.35);font-size:8px;text-decoration:none;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:100%;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='rgba(0,255,200,0.35)'">⭐ GitHub: crowdsec-threat-map</a></div>
   </aside>
 </div>
 
@@ -501,7 +501,7 @@
       <div style="width:9px;height:9px;border-radius:50%;background:#ffaa00;cursor:pointer;border:1px solid transparent;" class="mob-theme-dot" onclick="setTheme('amber')" id="mob-t-amber"></div>
       <button class="ctrl-btn" onclick="toggleSound()" id="mob-sound-btn" style="padding:2px 5px;font-size:8px;">🔇</button>
       <button class="ctrl-btn" onclick="exportCSV()" style="padding:2px 5px;font-size:8px;">↓CSV</button>
-      <a href="https://github.com/kabelsalatundklartext/crowdsec-threat-map-docker" target="_blank" style="color:rgba(0,255,200,0.4);font-size:8px;text-decoration:none;">⭐</a>
+      <a href="https://github.com/kabelsalatundklartext/crowdsec-threat-map" target="_blank" style="color:rgba(0,255,200,0.4);font-size:8px;text-decoration:none;">⭐</a>
     </div>
   </div>
 
@@ -541,8 +541,8 @@
 // 1. ⚠️ PFLICHT: IP-Adresse eures Unraid-Servers eintragen
 //    Wie findet ihr die IP? Unraid → Tools → System Information
 //    Oder im Terminal: ip addr | grep inet
-const EXPORTER_URL = '/metrics';
-//  Docker: '/metrics' (nginx proxy) | Direkt: 'http://IP:9456/metrics'
+const EXPORTER_URL = 'http://192.168.1.10:9456/metrics';
+//  Beispiel:          'http://192.168.1.10:9456/metrics'
 
 // 2. ⚠️ PFLICHT: Koordinaten eures Servers
 //    → Rechtsklick auf Google Maps → "Was ist hier?" → Zahlen kopieren
@@ -664,60 +664,6 @@ const LANG = {
   }
 };
 let currentLang = 'de';
-
-const CITY_NAMES_DE = {
-  "Antwerp": "Antwerpen",
-  "Athens": "Athen",
-  "Beijing": "Peking",
-  "Belgrade": "Belgrad",
-  "Brasov": "Kronstadt",
-  "Brno": "Brünn",
-  "Brussels": "Brüssel",
-  "Bucharest": "Bukarest",
-  "Cheb": "Eger",
-  "Cologne": "Köln",
-  "Copenhagen": "Kopenhagen",
-  "Dusseldorf": "Düsseldorf",
-  "Florence": "Florenz",
-  "Gdansk": "Danzig",
-  "Geneva": "Genf",
-  "Genoa": "Genua",
-  "Ghent": "Gent",
-  "Gothenburg": "Göteborg",
-  "Katowice": "Kattowitz",
-  "Krakow": "Krakau",
-  "Kyiv": "Kiew",
-  "Liege": "Lüttich",
-  "Lisbon": "Lissabon",
-  "Lubeck": "Lübeck",
-  "Malmo": "Malmö",
-  "Milan": "Mailand",
-  "Moscow": "Moskau",
-  "Munich": "München",
-  "Naples": "Neapel",
-  "Nuremberg": "Nürnberg",
-  "Plzen": "Pilsen",
-  "Prague": "Prag",
-  "Rome": "Rom",
-  "Saint Petersburg": "Sankt Petersburg",
-  "Seville": "Sevilla",
-  "Strasbourg": "Straßburg",
-  "Szczecin": "Stettin",
-  "Tokyo": "Tokio",
-  "Venice": "Venedig",
-  "Vienna": "Wien",
-  "Warsaw": "Warschau",
-  "Wroclaw": "Breslau",
-  "Zurich": "Zürich",
-};
-
-// Stadtname übersetzen je nach aktueller Sprache
-function translateCity(city) {
-  if (!city) return city;
-  if (currentLang === 'de' && CITY_NAMES_DE[city]) return CITY_NAMES_DE[city];
-  return city;
-}
-
 function t(key, ...args){ const tr=LANG[currentLang]; if(typeof tr[key]==='function') return tr[key](...args); return tr[key]||key; }
 
 function applyLang(){
@@ -1069,7 +1015,7 @@ function drawServerDots(){
     .attr('r',7).attr('fill','#00aaff').attr('stroke','#fff').attr('stroke-width',1.5);
   dotG.append('text').attr('class','srv-label').attr('x',sx+11).attr('y',sy+4)
     .attr('data-sx',sx).attr('fill','#00aaff').attr('font-size','9px')
-    .attr('font-family','Share Tech Mono,monospace').attr('letter-spacing','0.5px').attr('font-size','9px').text(SERVER_NAME_MAP||'SERVER') //  ← Server-Name auf der Karte;
+    .attr('font-family','Share Tech Mono,monospace').attr('letter-spacing','0px').attr('font-size','8px').text((SERVER_NAME_MAP||'SERVER').toLowerCase().split('').join(' ')) //  ← Server-Name auf der Karte;
   // Apply current scale immediately after drawing
   updateServerScale();
 }
@@ -1256,7 +1202,7 @@ function renderDots(){
           .attr('font-size', `${6*ik}px`)
           .attr('font-family','Orbitron,monospace')
           .attr('pointer-events','none')
-          .text(translateCity(d.city));
+          .text(d.city);
       }
     }
   });
@@ -1425,7 +1371,7 @@ let ctxCurrentIP='';
 function showCtx(ev,d){
   const m=document.getElementById('ctx-menu');
   ctxCurrentIP=d.ip||'';
-  const cityStr=d.city&&d.city!=='-'?` · 📍${translateCity(d.city)}`:'';
+  const cityStr=d.city&&d.city!=='-'?` · 📍${d.city}`:'';
   document.getElementById('ctx-title').textContent=`${FLAG[d.country]||'🌐'} ${d.ip}${cityStr}`;
   document.getElementById('c-cti').href=`https://app.crowdsec.net/cti/${d.ip}`;
   document.getElementById('c-shodan').href=`https://www.shodan.io/host/${d.ip}`;
@@ -1521,7 +1467,7 @@ function showTip(ev,d){
   const asnStr  = d.asnumber ? `AS${d.asnumber}` : '';
   const subnetStr= d.iprange && d.iprange!=='-' ? d.iprange : '';
   const timeStr = d.time_de || d.time_iso || '';
-  const cityStr = d.city && d.city!=='-' ? translateCity(d.city) : '';
+  const cityStr = d.city && d.city!=='-' ? d.city : '';
   tipEl.innerHTML=`
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px;">
       <span style="color:#ff2244;font-size:12px;">${d.ip}</span>
@@ -1557,7 +1503,7 @@ function feedItemHTML(d){
   const timeStr=d.time_de||d.time_iso||'—';
   const asnStr=d.asnumber?`AS${d.asnumber}`:'';
   const subnetStr=d.iprange&&d.iprange!=='-'?d.iprange:'';
-  const cityStr=d.city&&d.city!=='-'?translateCity(d.city):'';
+  const cityStr=d.city&&d.city!=='-'?d.city:'';
   return `<div class="feed-item" style="cursor:default;">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
       <div class="feed-ip" style="flex:1;">${d.ip}</div>
@@ -1724,7 +1670,7 @@ function flashPoint(px,py,ip,country,scenario,iprange,city){
     .attr('fill','#00ffe0')
     .attr('font-size',`${8*ik2}px`)
     .attr('font-family','Share Tech Mono,monospace')
-    .text(city&&city!=='-'?`${ip} · ${translateCity(city)}`:ip);
+    .text(city&&city!=='-'?`${ip} · ${city}`:ip);
 
   // Fade popup out after 2.5s
   setTimeout(()=>{
@@ -2032,7 +1978,8 @@ function drawCountryLabels(){
     const pt=proj([d.lon,d.lat]);
     if(!pt)return;
     const ik=1/currentScale;
-    const label=COUNTRY_NAMES[d.country]||d.country;
+    const COUNTRY_NAMES_DE_MAP={'US':'USA','CA':'Kanada','GB':'Vereinigtes Königreich','FR':'Frankreich','DE':'Deutschland','IT':'Italien','ES':'Spanien','NL':'Niederlande','CH':'Schweiz','AT':'Österreich','PL':'Polen','SE':'Schweden','NO':'Norwegen','DK':'Dänemark','FI':'Finnland','RU':'Russland','CN':'China','JP':'Japan','KR':'Südkorea','IN':'Indien','AU':'Australien','BR':'Brasilien','MX':'Mexiko','UA':'Ukraine','RO':'Rumänien','BG':'Bulgarien','IE':'Irland','PT':'Portugal','GR':'Griechenland','TR':'Türkei','ZA':'Südafrika','SG':'Singapur','TH':'Thailand','MY':'Malaysia','ID':'Indonesien','BE':'Belgien','CZ':'Tschechien','HU':'Ungarn','RS':'Serbien','HR':'Kroatien','SK':'Slowakei','MD':'Moldau','BA':'Bosnien','MK':'N.Mazedonien'};
+    const label = currentLang==='de' ? (COUNTRY_NAMES_DE_MAP[d.country]||COUNTRY_NAMES[d.country]||d.country) : (COUNTRY_NAMES[d.country]||d.country);
     const CC_CENTER={
       US:[37.09,-95.71],CA:[56.13,-106.35],GB:[54.37,-2.0],FR:[46.60,1.88],
       DE:[51.17,10.45],IT:[41.87,12.57],ES:[40.46,-3.75],NL:[52.13,5.29],
