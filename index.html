@@ -9,7 +9,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CrowdSec Threat Map</title>
+<title>🛡️ CrowdSec Threat Map</title>
 <!-- Fix 5: SVG Favicon — shield icon in accent color -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23020810'/%3E%3Cpath d='M16 3 L28 8 L28 18 C28 24 22 29 16 31 C10 29 4 24 4 18 L4 8 Z' fill='none' stroke='%2300ffe0' stroke-width='2'/%3E%3Cpath d='M16 3 L28 8 L28 18 C28 24 22 29 16 31 C10 29 4 24 4 18 L4 8 Z' fill='%2300ffe020'/%3E%3Ccircle cx='16' cy='17' r='4' fill='%2300ffe0'/%3E%3Cline x1='16' y1='10' x2='16' y2='13' stroke='%2300ffe0' stroke-width='2'/%3E%3C/svg%3E">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
@@ -354,7 +354,7 @@
 
 <!-- Map overlay title (always visible, centered on map) -->
 <div id="map-title-overlay">
-  <span id="h-title">CROWD<span>SEC</span> // THREAT MAP</span>
+  <span id="h-title">🛡 CROWD<span>SEC</span> // THREAT MAP</span>
   <span id="map-version-badge">v1.4.1</span>
 </div>
 <!-- hidden lang refs removed - sidebar has the real IDs -->
@@ -445,7 +445,7 @@
     </div>
     <div class="tab-content" id="tc-top10"><div id="top10"></div></div>
     <div class="tab-content" id="tc-topall"><div id="topall"></div></div>
-    <div id="sidebar-bottom">HAMBURG, DE &nbsp;|&nbsp; <span id="lu">—</span><br>
+    <div id="sidebar-bottom">MEIN-SERVER &nbsp;|&nbsp; <span id="lu">—</span><br>
       <div id="wl-badge" style="margin:4px 0 3px;display:flex;align-items:center;gap:5px;font-size:8px;letter-spacing:0.5px;">
         <span id="wl-dot" style="width:6px;height:6px;border-radius:50%;background:rgba(160,255,216,0.2);flex-shrink:0;display:inline-block;"></span>
         <span id="wl-text" style="color:rgba(160,255,216,0.3);">Whitelist: —</span>
@@ -541,8 +541,8 @@
 // 1. ⚠️ PFLICHT: IP-Adresse eures Unraid-Servers eintragen
 //    Wie findet ihr die IP? Unraid → Tools → System Information
 //    Oder im Terminal: ip addr | grep inet
-const EXPORTER_URL = 'http://EURE-UNRAID-IP:9456/metrics';
-//  Wird beim Docker-Start automatisch durch entrypoint.sh ersetzt
+const EXPORTER_URL = 'http://192.168.1.10:9456/metrics';
+//  Beispiel:          'http://192.168.1.10:9456/metrics'
 
 // 2. ⚠️ PFLICHT: Koordinaten eures Servers
 //    → Rechtsklick auf Google Maps → "Was ist hier?" → Zahlen kopieren
@@ -552,7 +552,7 @@ const SERVER_LON   = 10.172514267369685;
 
 // 3. ℹ️  OPTIONAL: Name der Markierung auf der Karte
 //    Wird als Label neben eurem Server-Punkt angezeigt
-const SERVER_NAME_MAP = 'HAMBURG';
+const SERVER_NAME_MAP = 'MEIN-SERVER';
 
 // ============================================================
 // Ab hier nichts mehr ändern
@@ -664,58 +664,6 @@ const LANG = {
   }
 };
 let currentLang = 'de';
-const CITY_NAMES_DE = {
-  "Antwerp": "Antwerpen",
-  "Athens": "Athen",
-  "Beijing": "Peking",
-  "Belgrade": "Belgrad",
-  "Brasov": "Kronstadt",
-  "Brno": "Brünn",
-  "Brussels": "Brüssel",
-  "Bucharest": "Bukarest",
-  "Cheb": "Eger",
-  "Cologne": "Köln",
-  "Copenhagen": "Kopenhagen",
-  "Dusseldorf": "Düsseldorf",
-  "Florence": "Florenz",
-  "Gdansk": "Danzig",
-  "Geneva": "Genf",
-  "Genoa": "Genua",
-  "Ghent": "Gent",
-  "Gothenburg": "Göteborg",
-  "Katowice": "Kattowitz",
-  "Krakow": "Krakau",
-  "Kyiv": "Kiew",
-  "Liege": "Lüttich",
-  "Lisbon": "Lissabon",
-  "Lubeck": "Lübeck",
-  "Malmo": "Malmö",
-  "Milan": "Mailand",
-  "Moscow": "Moskau",
-  "Munich": "München",
-  "Naples": "Neapel",
-  "Nuremberg": "Nürnberg",
-  "Plzen": "Pilsen",
-  "Prague": "Prag",
-  "Rome": "Rom",
-  "Saint Petersburg": "Sankt Petersburg",
-  "Seville": "Sevilla",
-  "Strasbourg": "Straßburg",
-  "Szczecin": "Stettin",
-  "Tokyo": "Tokio",
-  "Venice": "Venedig",
-  "Vienna": "Wien",
-  "Warsaw": "Warschau",
-  "Wroclaw": "Breslau",
-  "Zurich": "Zürich",
-};
-
-function translateCity(city) {
-  if (!city) return city;
-  if (currentLang === 'de' && CITY_NAMES_DE[city]) return CITY_NAMES_DE[city];
-  return city;
-}
-
 function t(key, ...args){ const tr=LANG[currentLang]; if(typeof tr[key]==='function') return tr[key](...args); return tr[key]||key; }
 
 function applyLang(){
@@ -1065,9 +1013,9 @@ function drawServerDots(){
   });
   dotG.append('circle').attr('class','srv-dot').attr('cx',sx).attr('cy',sy)
     .attr('r',7).attr('fill','#00aaff').attr('stroke','#fff').attr('stroke-width',1.5);
-  dotG.append('text').attr('class','srv-label').attr('x',sx+11).attr('y',sy+4)
+  dotG.append('text').attr('class','srv-label').attr('x',sx+14).attr('y',sy+4)
     .attr('data-sx',sx).attr('fill','#00aaff').attr('font-size','9px')
-    .attr('font-family','Share Tech Mono,monospace').attr('letter-spacing','1px').text(SERVER_NAME_MAP||'SERVER') //  ← Server-Name auf der Karte;
+    .attr('font-family','Share Tech Mono,monospace').attr('letter-spacing','0px').attr('font-size','7px').text(SERVER_NAME_MAP||'SERVER') //  ← Server-Name auf der Karte;
   // Apply current scale immediately after drawing
   updateServerScale();
 }
@@ -1083,7 +1031,7 @@ function updateServerScale(){
   const [sx]=proj([SERVER_LON,SERVER_LAT]);
   dotG.selectAll('.srv-label')
     .attr('font-size', (9*ik)+'px')
-    .attr('x',sx+11*ik)
+    .attr('x',sx+14*ik)
     .attr('y',function(){
       const [,sy]=proj([SERVER_LON,SERVER_LAT]);
       return sy+4*ik;
@@ -1254,7 +1202,7 @@ function renderDots(){
           .attr('font-size', `${6*ik}px`)
           .attr('font-family','Orbitron,monospace')
           .attr('pointer-events','none')
-          .text(translateCity(d.city));
+          .text(d.city);
       }
     }
   });
@@ -1519,7 +1467,7 @@ function showTip(ev,d){
   const asnStr  = d.asnumber ? `AS${d.asnumber}` : '';
   const subnetStr= d.iprange && d.iprange!=='-' ? d.iprange : '';
   const timeStr = d.time_de || d.time_iso || '';
-  const cityStr = d.city && d.city!=='-' ? translateCity(d.city) : '';
+  const cityStr = d.city && d.city!=='-' ? d.city : '';
   tipEl.innerHTML=`
     <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px;">
       <span style="color:#ff2244;font-size:12px;">${d.ip}</span>
@@ -1555,7 +1503,7 @@ function feedItemHTML(d){
   const timeStr=d.time_de||d.time_iso||'—';
   const asnStr=d.asnumber?`AS${d.asnumber}`:'';
   const subnetStr=d.iprange&&d.iprange!=='-'?d.iprange:'';
-  const cityStr=d.city&&d.city!=='-'?translateCity(d.city):'';
+  const cityStr=d.city&&d.city!=='-'?d.city:'';
   return `<div class="feed-item" style="cursor:default;">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;">
       <div class="feed-ip" style="flex:1;">${d.ip}</div>
@@ -1722,7 +1670,7 @@ function flashPoint(px,py,ip,country,scenario,iprange,city){
     .attr('fill','#00ffe0')
     .attr('font-size',`${8*ik2}px`)
     .attr('font-family','Share Tech Mono,monospace')
-    .text(city&&city!=='-'?`${ip} · ${translateCity(city)}`:ip);
+    .text(city&&city!=='-'?`${ip} · ${city}`:ip);
 
   // Fade popup out after 2.5s
   setTimeout(()=>{
