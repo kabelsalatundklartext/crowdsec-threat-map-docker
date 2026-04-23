@@ -2,7 +2,7 @@
 
 **Echtzeit-Angriffskarte — direkt aus eurer lokalen CrowdSec-Datenbank**
 
-![Version](https://img.shields.io/badge/version-v1.4.1-00ffe0?style=flat-square)
+![Version](https://img.shields.io/badge/version-v1.4.2-00ffe0?style=flat-square)
 ![License](https://img.shields.io/badge/license-GPL--3.0-00ff88?style=flat-square)
 ![Platform](https://img.shields.io/badge/platform-Docker%20%7C%20Unraid-orange?style=flat-square)
 ![Python](https://img.shields.io/badge/python-3.12-blue?style=flat-square)
@@ -27,13 +27,12 @@
 - 🔓 **IP-Unban** direkt aus dem Dashboard — löscht Decision UND Alert
 - 📊 **Sparkline** — Angriffe/Stunde auf einen Blick
 - 🎨 **4 Farbthemen** — Cyan, Alarm-Rot, Matrix-Grün, Amber
-- 🔊 **Sound-Alarm** bei neuen Hochrisiko-Angriffen (20+ Angriffe)
-- 📥 **CSV-Export** des kompletten Feeds
+- 📥 **CSV-Export** — direkt neben den Feed-Seitenzahlen
 - 📱 **Vollständig responsive** — Desktop und Mobile
 - 〰️ **Linien-Toggle** — Angriffspfeile & Radar-Ringe ein-/ausblenden
 - 🛡️ **Dynamische IP-Whitelist** — eigene IP automatisch alle 15 Min whitelisten
 - 🟢 **Whitelist-Badge** — zeigt aktuelle IP + Status live im Dashboard
-- 🌐 **Zweisprachig (DE/EN)** — alle Labels, Städte- und Ländernamen umschaltbar
+- 🌐 **Sprache per Variable** — `LANGUAGE=de` oder `LANGUAGE=en` in docker-compose
 - 🏙️ **Lokalisierte Stadtnamen** — Nürnberg statt Nuremberg, München statt Munich etc.
 - 📍 **Korrigierte GeoIP** — Vogtland/Plauen korrekt statt falscher Grenzregion
 
@@ -70,6 +69,7 @@ Unraid → **Apps** → Suchfeld: `crowdsec-threat-map` → Installieren
 | Variable `SERVER_NAME` | `MeinServer` | Anzeigename auf der Karte |
 | Variable `CROWDSEC_CONTAINER` | `crowdsec` | Name des CrowdSec-Containers |
 | Variable `WHITELIST_ENABLED` | `true` | Schützt vor Selbst-Ban bei IP-Wechsel |
+| Variable `LANGUAGE` | `de` | Sprache: `de` oder `en` |
 
 ### 4. Starten
 
@@ -93,6 +93,7 @@ docker run -d \
   -e SERVER_LAT=52.5200 \
   -e SERVER_LON=13.4050 \
   -e SERVER_NAME=Berlin \
+  -e LANGUAGE=de \
   ghcr.io/kabelsalatundklartext/crowdsec-threat-map-docker:latest
 ```
 
@@ -107,6 +108,7 @@ Oder mit `docker-compose.yml` — die aktuelle Version findet ihr im Repository 
 | `SERVER_LAT` | `0.0` | ⚠️ Breitengrad des Servers |
 | `SERVER_LON` | `0.0` | ⚠️ Längengrad des Servers |
 | `SERVER_NAME` | `MeinServer` | Anzeigename auf der Karte |
+| `LANGUAGE` | `de` | Sprache der Oberfläche: `de` oder `en` |
 | `CROWDSEC_CONTAINER` | `crowdsec` | Name des CrowdSec-Docker-Containers |
 | `CROWDSEC_DB_PATH` | `/crowdsec/data/crowdsec.db` | Pfad zur CrowdSec SQLite-DB |
 | `CROWDSEC_MMDB_PATH` | `/crowdsec/data/GeoLite2-City.mmdb` | Pfad zur GeoIP-Datenbank |
