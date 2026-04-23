@@ -843,14 +843,14 @@ function toggleAnim(){
     if(btn)btn.classList.add('on');
     if(lbl)lbl.textContent=t('anim_on')||'ANIM AN';
     if(mobDot){mobDot.style.background='var(--ok)';mobDot.style.boxShadow='0 0 5px var(--ok)';}
-    if(mobLbl)mobLbl.textContent='AN';
+    if(mobLbl)mobLbl.textContent='ANIMATION';
     if(mobBtn){mobBtn.style.borderColor='var(--ok)';mobBtn.style.color='var(--ok)';}
     startArcAnimation();
   } else {
     if(btn)btn.classList.remove('on');
     if(lbl)lbl.textContent=t('anim_off')||'ANIMATION AUS';
     if(mobDot){mobDot.style.background='rgba(160,255,216,0.3)';mobDot.style.boxShadow='none';}
-    if(mobLbl)mobLbl.textContent='AUS';
+    if(mobLbl)mobLbl.textContent='ANIMATION';
     if(mobBtn){mobBtn.style.borderColor='rgba(0,255,200,0.2)';mobBtn.style.color='rgba(160,255,216,0.45)';}
     if(animRAF){cancelAnimationFrame(animRAF);animRAF=null;}
     drawStaticArcs();
