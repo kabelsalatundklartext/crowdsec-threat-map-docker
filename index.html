@@ -76,17 +76,18 @@
 
   /* CSV neben Seitenzahlen */
   #feed-pages-wrap{
-    display:flex;align-items:center;justify-content:center;
+    display:flex;align-items:center;justify-content:space-between;
     gap:4px;padding:4px 8px;border-top:1px solid var(--dim);
-    background:rgba(0,5,15,0.9);flex-shrink:0;flex-wrap:wrap;
+    background:rgba(0,5,15,0.9);flex-shrink:0;flex-wrap:nowrap;
   }
   #feed-pages{
     display:flex;align-items:center;justify-content:center;
-    gap:4px;flex-wrap:wrap;flex:1;
+    gap:4px;flex-wrap:wrap;flex:1;min-width:0;
   }
   .csv-feed-btn{
     padding:3px 8px;font-size:clamp(7px,0.85vw,8px);
     border-color:rgba(0,255,200,0.25);opacity:0.7;flex-shrink:0;
+    white-space:nowrap;
   }
   .csv-feed-btn:hover{opacity:1;border-color:var(--accent);color:var(--accent);}
 
@@ -476,13 +477,13 @@
     <!-- Controls inline in tab bar -->
     <div style="display:flex;align-items:center;gap:4px;margin-left:auto;padding-right:6px;flex-shrink:0;">
 
-      <div id="mob-lines-toggle" onclick="toggleLines()" style="display:flex;align-items:center;gap:3px;background:rgba(0,255,200,0.08);border:1px solid rgba(0,255,200,0.35);border-radius:3px;padding:2px 5px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(0,255,200,0.8);white-space:nowrap;">
-        <div id="mob-lines-dot" style="width:5px;height:5px;border-radius:50%;background:var(--ok);box-shadow:0 0 5px var(--ok);"></div>
-        <span id="mob-lines-label">LINIE</span>
+      <div id="mob-lines-toggle" onclick="toggleLines()" style="display:flex;align-items:center;gap:3px;background:rgba(0,255,200,0.08);border:1px solid rgba(0,255,200,0.35);border-radius:3px;padding:2px 4px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(0,255,200,0.8);white-space:nowrap;">
+        <div id="mob-lines-dot" style="width:5px;height:5px;border-radius:50%;background:var(--ok);box-shadow:0 0 5px var(--ok);flex-shrink:0;"></div>
+        <span id="mob-lines-label">LINIEN</span>
       </div>
-      <div id="mob-anim-toggle" onclick="toggleAnim()" style="display:flex;align-items:center;gap:3px;background:transparent;border:1px solid rgba(0,255,200,0.2);border-radius:3px;padding:2px 5px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(160,255,216,0.45);white-space:nowrap;">
-        <div id="mob-anim-dot" style="width:5px;height:5px;border-radius:50%;background:rgba(160,255,216,0.3);"></div>
-        <span id="mob-anim-label">ANIM</span>
+      <div id="mob-anim-toggle" onclick="toggleAnim()" style="display:flex;align-items:center;gap:3px;background:transparent;border:1px solid rgba(0,255,200,0.2);border-radius:3px;padding:2px 4px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(160,255,216,0.45);white-space:nowrap;">
+        <div id="mob-anim-dot" style="width:5px;height:5px;border-radius:50%;background:rgba(160,255,216,0.3);flex-shrink:0;"></div>
+        <span id="mob-anim-label">ANIMATION</span>
       </div>
     </div>
   </div>
