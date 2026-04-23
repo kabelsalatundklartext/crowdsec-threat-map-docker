@@ -2,13 +2,13 @@
 set -e
 
 # ============================================================
-# CrowdSec Threat Map — Container Entrypoint v1.4.1
+# CrowdSec Threat Map — Container Entrypoint v1.4.1-beta
 # ============================================================
 
 log() { echo "[$(date '+%F %T')] $*"; }
 
 log "🛡️  CrowdSec Threat Map startet..."
-log "   Version: v1.4.1"
+log "   Version: v1.4.1-beta"
 
 # ── Pflichtprüfungen ──
 if [ -z "$SERVER_LAT" ] || [ "$SERVER_LAT" = "0.0" ]; then
@@ -58,6 +58,8 @@ export WHITELIST_FILE="${WHITELIST_FILE:-/crowdsec/postoverflows/s01-whitelist/m
 export WHITELIST_INTERVAL="${WHITELIST_INTERVAL:-900}"
 export CROWDSEC_RESTART_WAIT="${CROWDSEC_RESTART_WAIT:-15}"
 
+export LANGUAGE="${LANGUAGE:-de}"
+
 # ── index.html mit korrekter Exporter-URL patchen ──
 log "🔧 Dashboard konfigurieren..."
 
@@ -72,6 +74,16 @@ sed -i "s|const SERVER_LON   = 0.0;|const SERVER_LON   = ${SERVER_LON};|g" \
     /var/www/html/index.html 2>/dev/null || true
 sed -i "s|'MEIN-SERVER'|'${SERVER_NAME}'|g" \
     /var/www/html/index.html 2>/dev/null || true
+
+# Sprache setzen (de oder en)
+LANG_VAL="${LANGUAGE:-de}"
+if [ "$LANG_VAL" != "de" ] && [ "$LANG_VAL" != "en" ]; then
+    log "⚠️  LANGUAGE='${LANG_VAL}' unbekannt — Fallback auf 'de'"
+    LANG_VAL="de"
+fi
+sed -i "s|'LANGUAGE_PLACEHOLDER'|'${LANG_VAL}'|g" \
+    /var/www/html/index.html 2>/dev/null || true
+log "🌐 Sprache: ${LANG_VAL}"
 
 log "✅ Dashboard konfiguriert (Exporter-URL: ${METRICS_URL})"
 

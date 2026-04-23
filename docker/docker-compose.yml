@@ -31,6 +31,7 @@ services:
       # ℹ️  OPTIONAL: Weitere Einstellungen
       # ──────────────────────────────────────────────
       - SERVER_NAME=MeinServer          # Anzeigename im Dashboard
+      - LANGUAGE=de                     # Sprache: de oder en
       - CROWDSEC_CONTAINER=crowdsec     # Name des CrowdSec-Containers
       - CACHE_TTL=60                    # Cache-Zeit in Sekunden
       - DAYS_BACK=365                   # Wie viele Tage zurück anzeigen
