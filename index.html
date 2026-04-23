@@ -76,13 +76,13 @@
 
   /* CSV neben Seitenzahlen */
   #feed-pages-wrap{
-    display:flex;align-items:center;justify-content:space-between;
-    gap:4px;padding:4px 8px;border-top:1px solid var(--dim);
-    background:rgba(0,5,15,0.9);flex-shrink:0;flex-wrap:nowrap;
+    display:flex;align-items:center;justify-content:center;
+    padding:4px 8px;border-top:1px solid var(--dim);
+    background:rgba(0,5,15,0.9);flex-shrink:0;
   }
   #feed-pages{
     display:flex;align-items:center;justify-content:center;
-    gap:4px;flex-wrap:wrap;flex:1;min-width:0;
+    gap:4px;flex-wrap:nowrap;
   }
   .csv-feed-btn{
     padding:3px 8px;font-size:clamp(7px,0.85vw,8px);
@@ -449,12 +449,12 @@
           <button class="fsort-btn active" id="fsort-new" onclick="setFeedSort('newest')">▼ NEUESTE</button>
           <button class="fsort-btn" id="fsort-old" onclick="setFeedSort('oldest')">▲ ÄLTESTE</button>
         </div>
+        <button class="ctrl-btn csv-feed-btn" onclick="exportCSV()" title="Feed als CSV exportieren">↓ CSV</button>
       </div>
       <div id="feed"></div>
       <div id="feed-info"></div>
       <div id="feed-pages-wrap">
         <div id="feed-pages"></div>
-        <button class="ctrl-btn csv-feed-btn" onclick="exportCSV()" title="Feed als CSV exportieren">↓ CSV</button>
       </div>
     </div>
     <div class="tab-content" id="tc-top10"><div id="top10"></div></div>
@@ -1755,14 +1755,20 @@ function renderFeed(){
   function buildPagination(totalPages){
     if(totalPages<=1) return '';
     let btns='';
+    // ◀ Zurück
     btns+=`<button class="page-btn" onclick="setFeedPage(${feedPage-1})" ${feedPage===0?'disabled':''}>◀</button>`;
+    // Max 5 Seiten zentriert um aktuelle Seite
     const ws=5;
     let sP=Math.max(0,feedPage-Math.floor(ws/2));
     let eP=Math.min(totalPages-1,sP+ws-1);
-    if(eP-sP<ws-1)sP=Math.max(0,eP-ws+1);
-    if(sP>0)btns+=`<button class="page-btn" onclick="setFeedPage(0)">1</button>${sP>1?'<span style="color:rgba(160,255,216,0.3);font-size:9px;">…</span>':''}`;
+    if(eP-sP<ws-1) sP=Math.max(0,eP-ws+1);
+    // "…" wenn nicht bei Seite 1
+    if(sP>0) btns+=`<span style="color:rgba(160,255,216,0.3);font-size:9px;">…</span>`;
+    // Seitenzahlen 1-5
     for(let i=sP;i<=eP;i++) btns+=`<button class="page-btn${i===feedPage?' active':''}" onclick="setFeedPage(${i})">${i+1}</button>`;
-    if(eP<totalPages-1)btns+=`${eP<totalPages-2?'<span style="color:rgba(160,255,216,0.3);font-size:9px;">…</span>':''}<button class="page-btn" onclick="setFeedPage(${totalPages-1})">${totalPages}</button>`;
+    // "…" wenn nicht am Ende
+    if(eP<totalPages-1) btns+=`<span style="color:rgba(160,255,216,0.3);font-size:9px;">…</span>`;
+    // ▶ Weiter
     btns+=`<button class="page-btn" onclick="setFeedPage(${feedPage+1})" ${feedPage===totalPages-1?'disabled':''}>▶</button>`;
     return btns;
   }
