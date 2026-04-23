@@ -56,21 +56,39 @@
     padding:5px 10px;justify-content:space-between;
   }
   .sb-stat{display:flex;flex-direction:column;align-items:center;}
-  #sidebar-controls{
-    display:flex;align-items:center;justify-content:flex-end;gap:2px;
-    padding:3px 6px;overflow:hidden;min-width:0;
+  #sidebar-controls{display:none;} /* entfernt — aufgeteilt in toggle-row */
+
+  /* LINIE + ANIMATION — eigene Zeile, volle Breite, zentriert */
+  #toggle-row{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    padding:4px 8px;border-bottom:1px solid var(--dim);
+    background:rgba(0,5,15,0.8);flex-shrink:0;
   }
-  /* Alle Buttons in sidebar-controls schrumpfen mit */
-  #sidebar-controls .ctrl-btn,
-  #sidebar-controls #lang-btn,
-  #sidebar-controls #anim-toggle,
-  #sidebar-controls #lines-toggle {
-    flex-shrink:1;min-width:0;overflow:hidden;
+  #toggle-row #lines-toggle,
+  #toggle-row #anim-toggle {
+    flex:1;justify-content:center;
+    flex-shrink:0;min-width:0;overflow:hidden;
   }
-  /* re-use existing anim-toggle styles - override */
-  #anim-toggle{padding:2px 4px;font-size:clamp(6px,0.9vw,8px);letter-spacing:0px;gap:2px;}
-  #lines-toggle{padding:2px 4px;font-size:clamp(6px,0.9vw,8px);letter-spacing:0px;gap:2px;}
-  #anim-dot,#lines-dot{width:5px;height:5px;flex-shrink:0;}
+  /* re-use existing anim-toggle styles - override sizing */
+  #anim-toggle{padding:4px 8px;font-size:clamp(7px,0.95vw,9px);letter-spacing:0.5px;gap:4px;}
+  #lines-toggle{padding:4px 8px;font-size:clamp(7px,0.95vw,9px);letter-spacing:0.5px;gap:4px;}
+  #anim-dot,#lines-dot{width:6px;height:6px;flex-shrink:0;}
+
+  /* CSV neben Seitenzahlen */
+  #feed-pages-wrap{
+    display:flex;align-items:center;justify-content:center;
+    gap:4px;padding:4px 8px;border-top:1px solid var(--dim);
+    background:rgba(0,5,15,0.9);flex-shrink:0;flex-wrap:wrap;
+  }
+  #feed-pages{
+    display:flex;align-items:center;justify-content:center;
+    gap:4px;flex-wrap:wrap;flex:1;
+  }
+  .csv-feed-btn{
+    padding:3px 8px;font-size:clamp(7px,0.85vw,8px);
+    border-color:rgba(0,255,200,0.25);opacity:0.7;flex-shrink:0;
+  }
+  .csv-feed-btn:hover{opacity:1;border-color:var(--accent);color:var(--accent);}
 
   /* HEADER (old desktop) - keep stat-val/lbl styles referenced elsewhere */
   .stat-val{font-family:'Orbitron',monospace;font-size:clamp(10px,1.4vw,13px);font-weight:700;color:var(--accent);line-height:1;}
@@ -159,11 +177,6 @@
   .feed-item{padding:6px 10px 7px;border-bottom:1px solid rgba(0,255,200,0.05);cursor:pointer;}
   .feed-item{border-left:2px solid transparent;transition:background 0.15s;}
   .feed-item:hover{background:rgba(0,255,200,0.03);}
-  #feed-pages{
-    display:flex;align-items:center;justify-content:center;
-    gap:4px;padding:6px 8px;border-top:1px solid var(--dim);
-    background:rgba(0,5,15,0.9);flex-shrink:0;flex-wrap:wrap;
-  }
   .page-btn{
     min-width:26px;height:24px;padding:0 5px;
     border:1px solid rgba(0,255,200,0.2);border-radius:3px;
@@ -355,7 +368,7 @@
 <!-- Map overlay title (always visible, centered on map) -->
 <div id="map-title-overlay">
   <span id="h-title">CROWD<span>SEC</span> // THREAT MAP</span>
-  <span id="map-version-badge">v1.4.1</span>
+  <span id="map-version-badge">v1.4.1-beta</span>
 </div>
 <!-- hidden lang refs removed - sidebar has the real IDs -->
 
@@ -393,17 +406,14 @@
         <div class="sb-stat" id="s-scenarios-wrap"><span class="stat-val" id="s-scenarios">—</span><span class="stat-lbl" id="s-scenarios-lbl">SZENARIEN</span></div>
         <div class="sb-stat"><span class="stat-val blink" style="color:var(--ok)">●</span><span class="stat-lbl" id="s-live-lbl">LIVE</span></div>
       </div>
-      <div id="sidebar-controls">
-        <button class="ctrl-btn" id="sound-btn" onclick="toggleSound()" title="Sound-Alarm bei 20+ Angriffen">🔇</button>
-        <button class="ctrl-btn" onclick="exportCSV()" title="Feed als CSV exportieren">↓CSV</button>
-        <button id="lang-btn" onclick="toggleLang()" style="background:rgba(0,20,40,0.85);border:1px solid rgba(0,255,200,0.2);border-radius:3px;padding:2px 4px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:clamp(6px,0.9vw,8px);color:rgba(160,255,216,0.6);letter-spacing:0px;transition:all 0.2s;white-space:nowrap;flex-shrink:1;min-width:0;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='rgba(0,255,200,0.2)';this.style.color='rgba(160,255,216,0.6)'">🇬🇧 EN</button>
+      <div id="toggle-row">
         <div id="lines-toggle" onclick="toggleLines()" title="Linien/Pfeile ein- oder ausblenden" class="on">
           <div id="lines-dot"></div>
-          <span id="lines-label">LINIE</span>
+          <span id="lines-label">LINIEN</span>
         </div>
         <div id="anim-toggle" onclick="toggleAnim()" title="Animation ein/ausschalten">
           <div id="anim-dot"></div>
-          <span id="anim-label">ANIM</span>
+          <span id="anim-label">ANIMATION</span>
         </div>
       </div>
       <!-- Theme row: separate line below controls -->
@@ -441,7 +451,10 @@
       </div>
       <div id="feed"></div>
       <div id="feed-info"></div>
-      <div id="feed-pages"></div>
+      <div id="feed-pages-wrap">
+        <div id="feed-pages"></div>
+        <button class="ctrl-btn csv-feed-btn" onclick="exportCSV()" title="Feed als CSV exportieren">↓ CSV</button>
+      </div>
     </div>
     <div class="tab-content" id="tc-top10"><div id="top10"></div></div>
     <div class="tab-content" id="tc-topall"><div id="topall"></div></div>
@@ -462,7 +475,7 @@
     <div class="mob-tab-btn" data-mob="topall">🌍 ALLE</div>
     <!-- Controls inline in tab bar -->
     <div style="display:flex;align-items:center;gap:4px;margin-left:auto;padding-right:6px;flex-shrink:0;">
-      <button id="mob-lang-btn2" onclick="toggleLang()" style="background:transparent;border:1px solid rgba(0,255,200,0.2);border-radius:3px;padding:2px 5px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(160,255,216,0.6);letter-spacing:1px;">🇬🇧 EN</button>
+
       <div id="mob-lines-toggle" onclick="toggleLines()" style="display:flex;align-items:center;gap:3px;background:rgba(0,255,200,0.08);border:1px solid rgba(0,255,200,0.35);border-radius:3px;padding:2px 5px;cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(0,255,200,0.8);white-space:nowrap;">
         <div id="mob-lines-dot" style="width:5px;height:5px;border-radius:50%;background:var(--ok);box-shadow:0 0 5px var(--ok);"></div>
         <span id="mob-lines-label">LINIE</span>
@@ -499,7 +512,6 @@
       <div style="width:9px;height:9px;border-radius:50%;background:#ff2244;cursor:pointer;border:1px solid transparent;" class="mob-theme-dot" onclick="setTheme('red')" id="mob-t-red"></div>
       <div style="width:9px;height:9px;border-radius:50%;background:#00ff88;cursor:pointer;border:1px solid transparent;" class="mob-theme-dot" onclick="setTheme('matrix')" id="mob-t-matrix"></div>
       <div style="width:9px;height:9px;border-radius:50%;background:#ffaa00;cursor:pointer;border:1px solid transparent;" class="mob-theme-dot" onclick="setTheme('amber')" id="mob-t-amber"></div>
-      <button class="ctrl-btn" onclick="toggleSound()" id="mob-sound-btn" style="padding:2px 5px;font-size:8px;">🔇</button>
       <button class="ctrl-btn" onclick="exportCSV()" style="padding:2px 5px;font-size:8px;">↓CSV</button>
       <a href="https://github.com/kabelsalatundklartext/crowdsec-threat-map" target="_blank" style="color:rgba(0,255,200,0.4);font-size:8px;text-decoration:none;">⭐</a>
     </div>
@@ -558,7 +570,7 @@ const SERVER_NAME_MAP = 'MEIN-SERVER';
 // Ab hier nichts mehr ändern
 // ============================================================
 
-const APP_VERSION  = 'v1.4.1';
+const APP_VERSION  = 'v1.4.1-beta';
 const REFRESH_MS   = 30000;  // Aktualisierung alle 30 Sekunden
 const localUnbanned = new Set(); // lokal entsperrte IPs
 const ARC_FPS      = 10;     // Frames/Sek für Animation
@@ -602,10 +614,10 @@ const LANG = {
     sort:        'SORTIERUNG:',
     newest:      '▼ NEUESTE',
     oldest:      '▲ ÄLTESTE',
-    anim_off:    'ANIM',
-    anim_on:     'ANIM',
-    lines_off:   'LINIE',
-    lines_on:    'LINIE',
+    anim_off:    'ANIMATION',
+    anim_on:     'ANIMATION',
+    lines_off:   'LINIEN',
+    lines_on:    'LINIEN',
     server_lbl:  SERVER_NAME_MAP,
     zoom_lbl:    'ZOOM',
     lookup:      'IP NACHSCHLAGEN',
@@ -638,8 +650,8 @@ const LANG = {
     sort:        'SORT:',
     newest:      '▼ NEWEST',
     oldest:      '▲ OLDEST',
-    anim_off:    'ANIM',
-    anim_on:     'ANIM',
+    anim_off:    'ANIMATION',
+    anim_on:     'ANIMATION',
     lines_off:   'LINES',
     lines_on:    'LINES',
     server_lbl:  SERVER_NAME_MAP,
@@ -663,7 +675,7 @@ const LANG = {
     subnet_icon: '📡',
   }
 };
-let currentLang = 'de';
+let currentLang = 'LANGUAGE_PLACEHOLDER'; // wird durch entrypoint.sh ersetzt
 const CITY_NAMES_DE = {
   "Antwerp": "Antwerpen", "Athens": "Athen", "Beijing": "Peking",
   "Belgrade": "Belgrad", "Brasov": "Kronstadt", "Brno": "Brünn",
@@ -730,13 +742,6 @@ function applyLang(){
   // Re-render feed (updates time icons, labels etc)
   renderFeed();
   renderCountryLists();
-  // Lang toggle buttons
-  const langBtn=document.getElementById('lang-btn');
-  if(langBtn) langBtn.textContent = currentLang==='de' ? '🇬🇧 EN' : '🇩🇪 DE';
-  const mobLangBtn=document.getElementById('mob-lang-btn');
-  if(mobLangBtn) mobLangBtn.textContent = currentLang==='de' ? '🇬🇧 EN' : '🇩🇪 DE';
-  const mobLangBtn2=document.getElementById('mob-lang-btn2');
-  if(mobLangBtn2) mobLangBtn2.textContent = currentLang==='de' ? '🇬🇧 EN' : '🇩🇪 DE';
   // Mobile header labels
   const mobAtLbl=document.getElementById('mob-attacks-lbl');
   if(mobAtLbl) mobAtLbl.textContent=LANG[currentLang].attacks;
@@ -744,12 +749,7 @@ function applyLang(){
   if(mobCoLbl) mobCoLbl.textContent=LANG[currentLang].countries;
 }
 
-function toggleLang(){
-  currentLang = currentLang==='de' ? 'en' : 'de';
-  applyLang();
-  drawCountryLabels();
-  renderDots();
-}
+// toggleLang entfernt — Sprache wird über LANGUAGE Docker-Variable gesetzt
 
 const FLAG={AF:'🇦🇫',AL:'🇦🇱',DZ:'🇩🇿',AR:'🇦🇷',AM:'🇦🇲',AU:'🇦🇺',AT:'🇦🇹',AZ:'🇦🇿',BD:'🇧🇩',BY:'🇧🇾',BE:'🇧🇪',BR:'🇧🇷',BG:'🇧🇬',CA:'🇨🇦',CL:'🇨🇱',CN:'🇨🇳',CO:'🇨🇴',HR:'🇭🇷',CZ:'🇨🇿',DK:'🇩🇰',EG:'🇪🇬',EE:'🇪🇪',FI:'🇫🇮',FR:'🇫🇷',DE:'🇩🇪',GR:'🇬🇷',HK:'🇭🇰',HU:'🇭🇺',IN:'🇮🇳',ID:'🇮🇩',IR:'🇮🇷',IQ:'🇮🇶',IE:'🇮🇪',IL:'🇮🇱',IT:'🇮🇹',JP:'🇯🇵',KZ:'🇰🇿',KR:'🇰🇷',LV:'🇱🇻',LT:'🇱🇹',MY:'🇲🇾',MX:'🇲🇽',MD:'🇲🇩',NL:'🇳🇱',NZ:'🇳🇿',NG:'🇳🇬',NO:'🇳🇴',PK:'🇵🇰',PL:'🇵🇱',PT:'🇵🇹',RO:'🇷🇴',RU:'🇷🇺',SA:'🇸🇦',RS:'🇷🇸',SG:'🇸🇬',SK:'🇸🇰',ZA:'🇿🇦',ES:'🇪🇸',SE:'🇸🇪',CH:'🇨🇭',TW:'🇹🇼',TH:'🇹🇭',TR:'🇹🇷',UA:'🇺🇦',AE:'🇦🇪',GB:'🇬🇧',US:'🇺🇸',UZ:'🇺🇿',VN:'🇻🇳',BA:'🇧🇦',MK:'🇲🇰',MA:'🇲🇦',TN:'🇹🇳',LB:'🇱🇧',KW:'🇰🇼',QA:'🇶🇦',OM:'🇴🇲',JO:'🇯🇴',SY:'🇸🇾',LY:'🇱🇾',KH:'🇰🇭',LU:'🇱🇺',SI:'🇸🇮',MN:'🇲🇳'};
 
@@ -814,7 +814,7 @@ function toggleLines(){
     if(btn)btn.classList.add('on');
     if(lbl)lbl.textContent=t('lines_on')||'LINIEN AN';
     if(mobDot){mobDot.style.background='var(--ok)';mobDot.style.boxShadow='0 0 5px var(--ok)';}
-    if(mobLbl)mobLbl.textContent='LINIE';
+    if(mobLbl)mobLbl.textContent='LINIEN';
     if(mobBtn){mobBtn.style.borderColor='rgba(0,255,200,0.35)';mobBtn.style.color='rgba(0,255,200,0.8)';mobBtn.style.background='rgba(0,255,200,0.08)';}
     if(dotG)dotG.selectAll('.srv-ring').style('display',null);
     if(animOn) startArcAnimation(); else drawStaticArcs();
@@ -822,7 +822,7 @@ function toggleLines(){
     if(btn)btn.classList.remove('on');
     if(lbl)lbl.textContent=t('lines_off')||'LINIEN AUS';
     if(mobDot){mobDot.style.background='rgba(160,255,216,0.3)';mobDot.style.boxShadow='none';}
-    if(mobLbl)mobLbl.textContent='LINIE';
+    if(mobLbl)mobLbl.textContent='LINIEN';
     if(mobBtn){mobBtn.style.borderColor='rgba(0,255,200,0.2)';mobBtn.style.color='rgba(160,255,216,0.45)';mobBtn.style.background='transparent';}
     if(dotG)dotG.selectAll('.srv-ring').style('display','none');
     if(animRAF){cancelAnimationFrame(animRAF);animRAF=null;}
@@ -847,7 +847,7 @@ function toggleAnim(){
     startArcAnimation();
   } else {
     if(btn)btn.classList.remove('on');
-    if(lbl)lbl.textContent=t('anim_off')||'ANIM AUS';
+    if(lbl)lbl.textContent=t('anim_off')||'ANIMATION AUS';
     if(mobDot){mobDot.style.background='rgba(160,255,216,0.3)';mobDot.style.boxShadow='none';}
     if(mobLbl)mobLbl.textContent='AUS';
     if(mobBtn){mobBtn.style.borderColor='rgba(0,255,200,0.2)';mobBtn.style.color='rgba(160,255,216,0.45)';}
@@ -1900,35 +1900,8 @@ function setTheme(name){
   renderSparkline();
 }
 
-// ── SOUND ALARM ──
-let soundOn=false;
-let lastAlarmIPs=new Set();
-function toggleSound(){
-  soundOn=!soundOn;
-  ['sound-btn','mob-sound-btn'].forEach(id=>{
-    const btn=document.getElementById(id);
-    if(btn){btn.textContent=soundOn?'🔊':'🔇';btn.classList.toggle('on',soundOn);}
-  });
-}
-function playAlarm(){
-  try{
-    const ac=new(window.AudioContext||window.webkitAudioContext)();
-    [880,1100,880].forEach((freq,i)=>{
-      const o=ac.createOscillator();const g=ac.createGain();
-      o.connect(g);g.connect(ac.destination);
-      o.frequency.value=freq;g.gain.setValueAtTime(0.15,ac.currentTime+i*0.18);
-      g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+i*0.18+0.15);
-      o.start(ac.currentTime+i*0.18);o.stop(ac.currentTime+i*0.18+0.18);
-    });
-  }catch(e){}
-}
-function checkAlarms(){
-  if(!soundOn)return;
-  const highRisk=attackData.filter(d=>d.count>=20);
-  const newOnes=highRisk.filter(d=>!lastAlarmIPs.has(d.ip));
-  if(newOnes.length>0)playAlarm();
-  lastAlarmIPs=new Set(highRisk.map(d=>d.ip));
-}
+// Sound entfernt — war toggleSound/playAlarm/checkAlarms
+function checkAlarms(){} // Stub — kein Sound mehr
 
 // ── CSV EXPORT ──
 function exportCSV(){
