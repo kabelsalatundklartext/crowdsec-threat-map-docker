@@ -1,6 +1,6 @@
 # 🛡️ CrowdSec Threat Map
 
-**Echtzeit-Angriffskarte — direkt aus eurer lokalen CrowdSec-Datenbank**
+**Real-time attack map — directly from your local CrowdSec database**
 
 ![Version](https://img.shields.io/badge/version-v1.4.2-00ffe0?style=flat-square)
 ![License](https://img.shields.io/badge/license-GPL--3.0-00ff88?style=flat-square)
@@ -10,7 +10,246 @@
 
 ---
 
+# 🇬🇧 English
+
 ## 📸 Preview
+
+> Interactive world map · Animated attack lines · Live feed · Mobile-ready
+
+![CrowdSec Threat Map](preview.png)
+
+---
+
+## ✨ Features
+
+- 🌍 **Interactive world map** with animated attack lines (D3.js)
+- 🎯 **Auto-fit zoom** — automatically keeps all attack points visible
+- 🔍 **Real-time search** by IP, country, city, scenario, ASN
+- 🚫📋 **Ban status indicator** — 🚫 active ban / 📋 alert-history only
+- 🔓 **IP unban** directly from the dashboard — removes Decision AND Alert
+- 📊 **Sparkline** — attacks per hour at a glance
+- 🎨 **4 color themes** — Cyan, Alarm Red, Matrix Green, Amber
+- 📥 **CSV export** — directly next to the feed pagination
+- 📱 **Fully responsive** — desktop and mobile
+- 〰️ **Line toggle** — enable/disable attack lines & radar rings
+- 🛡️ **Dynamic IP whitelist** — automatically whitelists your current IP every 15 min
+- 🟢 **Whitelist badge** — shows current IP + live status in dashboard
+- 🌐 **Language via variable** — `LANGUAGE=de` or `LANGUAGE=en` in docker-compose
+- 🏙️ **Localized city names** — Nuremberg instead of Nürnberg, Munich instead of München, etc.
+- 📍 **Corrected GeoIP** — Vogtland/Plauen shown correctly instead of wrong border region
+
+---
+
+## 🚀 Installation — Unraid (App Store)
+
+### 1. Open App Store
+
+Unraid → **Apps** → Search: `crowdsec-threat-map` → Install
+
+### 2. Fill required fields
+
+| Unraid | Example | Description |
+|------|---------|-------------|
+| **Server Latitude** | `52.5200` | ⚠️ Required — your server latitude |
+| **Server Longitude** | `13.4050` | ⚠️ Required — your server longitude |
+| Path `/crowdsec/data` | `/mnt/user/Docker/crowdsec/data` | ⚠️ Required — path to your CrowdSec data |
+| Path `/crowdsec/postoverflows` | `/mnt/user/Docker/crowdsec/postoverflows` | Required for dynamic whitelist |
+| Port `8080` | `8080` | Dashboard port (freely selectable) |
+
+> **Find coordinates:** Right click on [Google Maps](https://maps.google.com) → “What’s here?”
+
+> **Find CrowdSec path:**
+> ```bash
+> docker inspect crowdsec | grep -A5 "Mounts"
+> # → "Source": "/mnt/user/Docker/crowdsec/data"
+> ```
+
+### 3. Optional settings
+
+| Field | Default | Description |
+|------|----------|-------------|
+| Variable `SERVER_NAME` | `MyServer` | Display name on the map |
+| Variable `CROWDSEC_CONTAINER` | `crowdsec` | Name of the CrowdSec container |
+| Variable `WHITELIST_ENABLED` | `true` | Prevents self-ban on IP changes |
+| Variable `LANGUAGE` | `en` | Language: `de` or `en` |
+
+### 4. Start
+
+Click **Apply** → container starts automatically.
+
+Dashboard: **http://YOUR-UNRAID-IP:8080**
+
+---
+
+## 🚀 Installation — Docker
+
+```bash
+docker run -d \
+  --name crowdsec-monitor \
+  --restart unless-stopped \
+  -p 8080:8080 \
+  -v /path/to/crowdsec/data:/crowdsec/data:ro \
+  -v /path/to/crowdsec/postoverflows:/crowdsec/postoverflows \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  --group-add 999 \
+  -e SERVER_LAT=52.5200 \
+  -e SERVER_LON=13.4050 \
+  -e SERVER_NAME=Berlin \
+  -e LANGUAGE=en \
+  ghcr.io/kabelsalatundklartext/crowdsec-threat-map-docker:latest
+```
+
+Or with `docker-compose.yml` — the latest version is available in the repository under `docker/docker-compose.yml`.
+
+---
+
+## ⚙️ All Variables
+
+| Variable | Default | Description |
+|----------|----------|-------------|
+| `SERVER_LAT` | `0.0` | ⚠️ Server latitude |
+| `SERVER_LON` | `0.0` | ⚠️ Server longitude |
+| `SERVER_NAME` | `MyServer` | Display name on the map |
+| `LANGUAGE` | `en` | UI language: `de` or `en` |
+| `CROWDSEC_CONTAINER` | `crowdsec` | Name of the CrowdSec Docker container |
+| `CROWDSEC_DB_PATH` | `/crowdsec/data/crowdsec.db` | Path to CrowdSec SQLite DB |
+| `CROWDSEC_MMDB_PATH` | `/crowdsec/data/GeoLite2-City.mmdb` | Path to GeoIP database |
+| `CACHE_TTL` | `60` | Cache time in seconds |
+| `DAYS_BACK` | `365` | Number of days to display |
+| `WHITELIST_ENABLED` | `true` | Enable dynamic whitelist |
+| `WHITELIST_FILE` | `/crowdsec/postoverflows/`<br>`s01-whitelist/my-whitelist.yaml` | Path to whitelist YAML |
+| `WHITELIST_INTERVAL` | `900` | Check interval in seconds (15 min) |
+| `CROWDSEC_RESTART_WAIT` | `15` | Wait time after CrowdSec restart (sec.) |
+
+---
+
+## 📦 Volumes
+
+| Host Path | Container Path | Description | Required? |
+|-----------|---------------|-------------|---------|
+| `/path/to/crowdsec/data` | `/crowdsec/data:ro` | CrowdSec DB + GeoIP MMDB | ✅ Yes |
+| `/path/to/crowdsec/postoverflows` | `/crowdsec/postoverflows` | For dynamic whitelist | Only if `WHITELIST_ENABLED=true` |
+| `/var/run/docker.sock` | `/var/run/docker.sock:ro` | For IP unban + whitelist restart | Only for unban button |
+
+---
+
+## 🛡️ Dynamic IP Whitelist
+
+Most home internet connections get a new public IP regularly. Without a whitelist, CrowdSec may ban your own connection.  
+The built-in background thread checks your current public IP every 15 minutes and updates the whitelist YAML automatically.
+
+**Requirements:**
+- `WHITELIST_ENABLED=true` (default)
+- Volume `/crowdsec/postoverflows` mounted
+- `/var/run/docker.sock` mounted
+- Correct Docker GID set (`--group-add 999` or `group_add` in Unraid)
+
+**How it works:**
+1. Exporter detects your current public IP
+2. Compares it with the current whitelist YAML
+3. If changed: YAML gets updated, CrowdSec restarts
+4. Restart wait time configurable via `CROWDSEC_RESTART_WAIT`
+
+**Dashboard badge:**
+
+| Color | Meaning |
+|-------|---------|
+| 🟢 Green | IP whitelisted, all good |
+| 🔵 Cyan | IP was just updated |
+| 🔴 Red | Update error |
+
+---
+
+## 🔓 IP Unban
+
+Each feed entry shows the ban status directly:
+
+| Icon | Meaning | Click |
+|------|---------|-------|
+| 🚫 (glowing) | Active ban exists | Remove Decision + Alert |
+| 📋 (glowing) | Alert/history only | Remove Alert only |
+
+---
+
+## 🗺️ GeoIP & City Display
+
+Without a GeoIP database, only country markers are shown — no city data.
+
+**Setup GeoLite2-City.mmdb:**
+1. Register for free: [MaxMind GeoLite2](https://www.maxmind.com/en/geolite2/signup)
+2. Download `GeoLite2-City.mmdb`
+3. Place it in your CrowdSec data folder (same folder as `crowdsec.db`)
+4. Restart container
+
+---
+
+## 🛠️ Troubleshooting
+
+**Dashboard empty / no data:**
+```bash
+docker logs crowdsec-monitor
+curl http://YOUR-IP:8080/metrics | head -10
+```
+
+**Wrong CrowdSec path:**
+```bash
+docker inspect crowdsec | grep -A5 "Mounts"
+```
+
+**Unban does not work:**
+```bash
+# Check Docker GID
+getent group docker | cut -d: -f3
+# → Add in Unraid under "Extra Parameters" as --group-add
+```
+
+**Whitelist error:**
+```bash
+curl http://YOUR-IP:8080/whitelist-status
+```
+
+**Dashboard shows connection error:**
+```bash
+# Check whether entrypoint.sh set the correct URL
+docker exec crowdsec-monitor grep "EXPORTER_URL" /var/www/html/index.html
+# → Should show '/metrics'
+```
+
+---
+
+## 📋 Changelog
+
+Full version history → [CHANGELOG.md](CHANGELOG.md)
+
+---
+
+## 🔗 Links
+
+- [MaxMind GeoLite2](https://www.maxmind.com/en/geolite2/signup) — free GeoIP database
+- [CrowdSec Docker Hub](https://hub.docker.com/r/crowdsecurity/crowdsec)
+- [CrowdSec Docs](https://docs.crowdsec.net)
+
+---
+
+## 📄 License
+
+**GNU General Public License v3.0 (GPL-3.0)**
+
+| | |
+|--|--|
+| ✅ Private & homelab use | ✅ Modify & customize |
+| ✅ Redistribute & share | ✅ Publish own versions |
+| ✅ Commercial use allowed | ❌ No closed-source forks |
+| ✅ Forks must remain GPL-3.0 | ✅ Source code must stay open |
+
+When redistributing or publishing: keep attribution + GPL-3.0 license.
+> *"CrowdSec Threat Map" by kabelsalatundklartext — [GitHub](https://github.com/kabelsalatundklartext/crowdsec-threat-map-docker)*
+
+---
+
+# 🇩🇪 Deutsch
+
+## 📸 Vorschau
 
 > Interaktive Weltkarte · Animierte Angriffspfeile · Live-Feed · Mobile-ready
 
@@ -128,10 +367,6 @@ Oder mit `docker-compose.yml` — die aktuelle Version findet ihr im Repository 
 | `/pfad/zu/crowdsec/data` | `/crowdsec/data:ro` | CrowdSec DB + GeoIP-MMDB | ✅ Ja |
 | `/pfad/zu/crowdsec/postoverflows` | `/crowdsec/postoverflows` | Für dynamische Whitelist | Nur wenn `WHITELIST_ENABLED=true` |
 | `/var/run/docker.sock` | `/var/run/docker.sock:ro` | Für IP-Unban + Whitelist-Neustart | Nur für Unban-Button |
-
-> **Unraid-Beispielpfade:**
-> - `/mnt/user/Docker/crowdsec/data`
-> - `/mnt/user/Docker/crowdsec/postoverflows`
 
 ---
 
